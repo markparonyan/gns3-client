@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "gns3-client"
+name = "gns3client"
 version = "0.1.0"
 description = "GNS3 client"
 authors = ["Mark Paronyan <markparonian@gmail.com>"]
@@ -8,6 +8,8 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.13"
+openapi-client = {path = "gns3client/client"}
+click = "^8.1.8"
 
 
 [build-system]
