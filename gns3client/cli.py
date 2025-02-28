@@ -11,21 +11,25 @@ from gns3client.client import openapi_client
 
 
 @click.group()
-def cli():
+@click.option('--host', default="127.0.0.1:3080", show_default=True, type=str, help='GNS3 server host')
+@click.pass_context
+def cli(ctx, host):
     """
     GNS3 Client CLI
 
     Use this tool to manage GNS3 server.
     """
-    pass
+    ctx.obj = {}
+    ctx.obj['host'] = host
 
 
 @cli.command()
-@click.option('--host', default="127.0.0.1:3080", show_default=True, type=str, help='GNS3 server host')
-def version(host):
+@click.pass_context
+def version(ctx):
     """
     Get GNS3 server version.
     """
+    host = ctx.obj.get('host')
     configuration = openapi_client.Configuration(host=host)
     try:
         with openapi_client.ApiClient(configuration) as api_client:
@@ -35,6 +39,7 @@ def version(host):
     except openapi_client.ApiException as e:
         click.echo(f"Exception when calling ControllerAPI->version: {e}")
 
+# -------------------manage gns3client library------------------------
 
 @cli.group(name="self")
 def self():
