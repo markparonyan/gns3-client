@@ -1,4 +1,6 @@
-import os, sys
+# gns3client/cli.py
+import os
+import sys
 import click
 
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
@@ -8,13 +10,23 @@ from gns3client.client.openapi_client.apis.tags import controller_api
 from gns3client.client import openapi_client
 
 
+@click.group()
+def cli():
+    """
+    GNS3 Client CLI
 
-@click.command()
-def _version(config):
+    Use this tool to manage GNS3 server.
     """
-    Connect to the GNS3 server and fetch its version information.
+    pass
+
+
+@cli.command()
+@click.option('--host', default="127.0.0.1:3080", show_default=True, type=str, help='GNS3 server host')
+def version(host):
     """
-    configuration = openapi_client.Configuration(host=config.host)
+    Get GNS3 server version.
+    """
+    configuration = openapi_client.Configuration(host=host)
     try:
         with openapi_client.ApiClient(configuration) as api_client:
             api_instance = controller_api.ControllerApi(api_client)
@@ -24,15 +36,15 @@ def _version(config):
         click.echo(f"Exception when calling ControllerAPI->version: {e}")
 
 
-@click.group()
-def cli():
+@cli.group(name="self")
+def self():
     """
-    Commands related to the gns3client library itself.
+    Manage the gns3client library itself.
     """
     pass
 
 
-@cli.command()
+@self.command()
 def version():
     """
     Show the version of the gns3client library.

@@ -15,3 +15,6 @@ click = "^8.1.8"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+gns3client = "gns3client.cli:cli"
