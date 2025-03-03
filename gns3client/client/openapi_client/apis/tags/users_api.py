@@ -16,7 +16,6 @@ from openapi_client.paths.v3_access_users_me.get import GetLoggedInUserV3AccessU
 from openapi_client.paths.v3_access_users_user_id_groups.get import GetUserMembershipsV3AccessUsersUserIdGroupsGet
 from openapi_client.paths.v3_access_users_user_id.get import GetUserV3AccessUsersUserIdGet
 from openapi_client.paths.v3_access_users.get import GetUsersV3AccessUsersGet
-from openapi_client.paths.v3_access_users_login.post import LoginV3AccessUsersLoginPost
 from openapi_client.paths.v3_access_users_me.put import UpdateLoggedInUserV3AccessUsersMePut
 from openapi_client.paths.v3_access_users_user_id.put import UpdateUserV3AccessUsersUserIdPut
 
@@ -29,7 +28,6 @@ class UsersApi(
     GetUserMembershipsV3AccessUsersUserIdGroupsGet,
     GetUserV3AccessUsersUserIdGet,
     GetUsersV3AccessUsersGet,
-    LoginV3AccessUsersLoginPost,
     UpdateLoggedInUserV3AccessUsersMePut,
     UpdateUserV3AccessUsersUserIdPut,
 ):

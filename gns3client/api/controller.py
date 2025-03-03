@@ -18,7 +18,7 @@ class ControllerAPI:
             with openapi_client.ApiClient(configuration) as api_client:
                 api_instance = controller_api.ControllerApi(api_client)
                 api_response = api_instance.get_version_v3_version_get()
-                return api_response.body.get('version')
+                return api_response.body
         except openapi_client.ApiException as e:
             print(f"Exception when calling ControllerAPI->version: {e}")
 

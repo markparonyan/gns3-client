@@ -5,10 +5,9 @@ import click
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.append(parent_dir)
 
-from gns3client.client.openapi_client.apis.tags import controller_api, projects_api
-from gns3client.client import openapi_client
 from .api.projects import ProjectsAPI
 from .api.controller import ControllerAPI
+from .api.users import UsersAPI
 
 
 @click.group()
@@ -22,6 +21,7 @@ def cli(ctx, host):
     """
     ctx.obj = {}
     ctx.obj['host'] = host
+    ctx.obj['access_token'] = UsersAPI(ctx.obj.get('host')).authenticate("admin", "admin")
 
 
 @cli.command()
@@ -36,17 +36,26 @@ def version(ctx):
 @click.pass_context
 def projects(ctx):
     host = ctx.obj.get('host')
+    access_token = ctx.obj.get('access_token')
     project = ProjectsAPI(host)
-    click.echo(project.get_projects())
+    click.echo(project.get_projects(access_token))
 
 
 @cli.command()
 @click.pass_context
 def project(ctx):
     host = ctx.obj.get('host')
+    access_token = ctx.obj.get('access_token')
     project = ProjectsAPI(host)
-    click.echo(project.get_project(project_id="adfa"))
+    click.echo(project.get_project(access_token=access_token, project_id="adfa"))
 
+
+@cli.command()
+@click.pass_context
+def auth(ctx):
+    host = ctx.obj.get('host')
+    token = UsersAPI(host)
+    click.echo(token.authenticate())
 
 
 # -------------------manage gns3client library------------------------
