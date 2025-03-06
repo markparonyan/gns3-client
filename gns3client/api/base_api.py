@@ -3,15 +3,12 @@ import sys
 import importlib.util
 import importlib.machinery
 
-# Add the parent directory to the path
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.append(parent_dir)
 
-# Import the openapi_client modules directly
 openapi_client_dir = os.path.join(parent_dir, 'client', 'openapi_client')
 sys.path.append(openapi_client_dir)
 
-# Import Configuration and ApiClient directly
 from configuration import Configuration
 from api_client import ApiClient
 from exceptions import ApiException
@@ -20,11 +17,11 @@ from exceptions import ApiException
 class BaseAPI:
     """Base class for all API wrappers."""
     
-    def __init__(self, host):
+    def __init__(self, host="http://localhost:3080"):
         """Initialize the API with the GNS3 server host.
         
         Args:
-            host (str): The GNS3 server host URL (e.g., 'http://localhost:3080')
+            host (str): The GNS3 server host URL 
         """
         self.host = host
     
@@ -37,9 +34,12 @@ class BaseAPI:
         Returns:
             tuple: (api_client, configuration) - The API client and configuration objects
         """
+        # NOTE: Lost quite a bit of time figuring out why the Authorization header was not being set
+        # Apparentely, the ApiClient doesn't set the Authorization header automatically
+        # so we need to do it manually and now i dont understand whats the point to pass
+        # the access_token in the Configuration constructor.
         configuration = Configuration(host=self.host, access_token=access_token)
         api_client = ApiClient(configuration)
-        # Manually set the Authorization header to ensure it's included in requests
         api_client.set_default_header("Authorization", f"Bearer {access_token}")
         return api_client, configuration
     
