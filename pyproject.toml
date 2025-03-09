@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "gns3client"
-version = "0.1.12"
+version = "0.1.13"
 description = "GNS3 client"
 authors = ["Mark Paronyan <markparonian@gmail.com>"]
 license = "GPL-3.0"
