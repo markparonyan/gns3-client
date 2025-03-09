@@ -1,20 +1,40 @@
 [tool.poetry]
 name = "gns3client"
-version = "0.1.0"
+version = "0.1.12"
 description = "GNS3 client"
 authors = ["Mark Paronyan <markparonian@gmail.com>"]
 license = "GPL-3.0"
 readme = "README.md"
+repository = "https://github.com/markparonyan/gns3-client"
+homepage = "https://github.com/markparonyan/gns3-client"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Operating System :: OS Independent",
+]
+keywords = ["gns3", "networking", "api", "client"]
 
 [tool.poetry.dependencies]
-python = "^3.13"
-openapi-client = {path = "gns3client/client"}
-click = "^8.1.8"
+python = ">=3.8"
+urllib3 = ">=1.26.0"
+certifi = ">=2023.7.22"
+requests = ">=2.25.0"
+typing-extensions = ">=4.0.0"
+frozendict = ">=2.0.0"  
+python-dateutil = ">=2.8.0"
+click = ">=8.0.0"
 
+[tool.poetry.group.dev.dependencies]
+mypy = ">=1.0.0"
+ruff = "^0.9.10"
+bashate = "^2.1.1"
 
 [build-system]
-requires = ["poetry-core"]
+requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
-
-[tool.poetry.scripts]
-gns3client = "gns3client.cli:cli"
