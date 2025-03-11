@@ -101,6 +101,25 @@ class LinksAPI(BaseAPI):
             "LinksApi->delete_link_v3_projects_project_id_links_link_id_delete",
             path_params={"project_id": project_id, "link_id": link_id}
         )
+    
+    def reset(self, access_token, project_id, link_id):
+        """Reset a link.
+        
+        Args:
+            access_token (str): The OAuth2 access token for authentication
+            project_id (str): The ID of the project
+            link_id (str): The ID of the link to reset
+            
+        Returns:
+            dict: The response data
+        """
+        return self._call_api(
+            access_token,
+            LinksApi,
+            "reset_link_v3_projects_project_id_links_link_id_reset_post",
+            "LinksApi->reset_link_v3_projects_project_id_links_link_id_reset_post",
+            path_params={"project_id": project_id, "link_id": link_id}
+        ) 
             
     def start_capture(self, access_token, project_id, link_id, capture_data=None):
         """Start packet capture on a link.
@@ -182,21 +201,3 @@ class LinksAPI(BaseAPI):
             path_params={"project_id": project_id, "link_id": link_id}
         )
             
-    def reset(self, access_token, project_id, link_id):
-        """Reset a link.
-        
-        Args:
-            access_token (str): The OAuth2 access token for authentication
-            project_id (str): The ID of the project
-            link_id (str): The ID of the link to reset
-            
-        Returns:
-            dict: The response data
-        """
-        return self._call_api(
-            access_token,
-            LinksApi,
-            "reset_link_v3_projects_project_id_links_link_id_reset_post",
-            "LinksApi->reset_link_v3_projects_project_id_links_link_id_reset_post",
-            path_params={"project_id": project_id, "link_id": link_id}
-        ) 
