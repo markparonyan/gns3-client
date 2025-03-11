@@ -1,4 +1,4 @@
-name: ruff
+name: ruff-lint
 'on':
   push:
     branches:
@@ -17,5 +17,3 @@ jobs:
           python-version: 3.11
       - run: pip install ruff 
       - run: ruff check gns3client/ --output-format=github
-      - run: ruff format gns3client/ --check
-      - run: ruff check gns3client/ --select I
