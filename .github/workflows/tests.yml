@@ -1,5 +1,5 @@
 name: Coverage CI  
-on: [push, pull_request]  
+on: [pull_request]  
   
 jobs:  
   poetry:  
@@ -63,4 +63,4 @@ jobs:
       #----------------------------------------------  
       - name: Run tests and generate coverage  
         run: |  
-          poetry run pytest --cov=gns3client tests
+          poetry run pytest 
