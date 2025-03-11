@@ -21,7 +21,7 @@ classifiers = [
 keywords = ["gns3", "networking", "api", "client"]
 
 [tool.poetry.dependencies]
-python = ">=3.8"
+python = ">=3.9"
 urllib3 = ">=1.26.0"
 certifi = ">=2023.7.22"
 requests = ">=2.25.0"
@@ -34,7 +34,35 @@ click = ">=8.0.0"
 mypy = ">=1.0.0"
 ruff = "^0.9.10"
 bashate = "^2.1.1"
+pytest-mock = "^3.14.0"
+pytest-cov = "^6.0.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+# **** Tests configuration ****
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*"
+
+[tool.coverage.run]
+source = ["gns3client"]
+omit = ["tests/*", "gns3client/openapi_client/*", "*/__init__.py"]
+dynamic_context = "test_function"
+
+[tool.coverage.report]
+exclude_lines = [
+    "import .*",
+    "from .* import .*",
+    "pragma: no cover",
+    "@abstractmethod",
+    "raise NotImplementedError",
+    "def __repr__",
+    "if TYPE_CHECKING:",
+    "if typing.TYPE_CHECKING:"
+]
+
+exclude_also = ["__init__.py$"]
