@@ -2,7 +2,6 @@ from gns3client.openapi_client.apis.tags.projects_api import ProjectsApi
 from gns3client.api.base_api import BaseAPI
 
 
-
 class ProjectsAPI(BaseAPI):
     """API wrapper for GNS3 Projects API."""
 
@@ -62,25 +61,7 @@ class ProjectsAPI(BaseAPI):
             "ProjectsApi->create_project_v3_projects_post",
             body=project_data
         )
-            
-    def delete(self, access_token, project_id):
-        """Delete a GNS3 project.
-        
-        Args:
-            access_token (str): The OAuth2 access token for authentication
-            project_id (str): The ID of the project to delete
-            
-        Returns:
-            dict: The response data
-        """
-        return self._call_api(
-            access_token,
-            ProjectsApi,
-            "delete_project_v3_projects_project_id_delete",
-            "ProjectsApi->delete_project_v3_projects_project_id_delete",
-            path_params={"project_id": project_id}
-        )
-            
+
     def update(self, access_token, project_id, **kwargs):
         """Update a GNS3 project.
         
@@ -100,7 +81,46 @@ class ProjectsAPI(BaseAPI):
             path_params={"project_id": project_id},
             body=kwargs
         )
+ 
+
             
+    def delete(self, access_token, project_id):
+        """Delete a GNS3 project.
+        
+        Args:
+            access_token (str): The OAuth2 access token for authentication
+            project_id (str): The ID of the project to delete
+            
+        Returns:
+            dict: The response data
+        """
+        return self._call_api(
+            access_token,
+            ProjectsApi,
+            "delete_project_v3_projects_project_id_delete",
+            "ProjectsApi->delete_project_v3_projects_project_id_delete",
+            path_params={"project_id": project_id}
+        )
+    
+    def stats(self, access_token, project_id):
+        """Get statistics for a GNS3 project.
+        
+        Args:
+            access_token (str): The OAuth2 access token for authentication
+            project_id (str): The ID of the project
+            
+        Returns:
+            dict: The project statistics
+        """
+        return self._call_api(
+            access_token,
+            ProjectsApi,
+            "get_project_stats_v3_projects_project_id_stats_get",
+            "ProjectsApi->get_project_stats_v3_projects_project_id_stats_get",
+            path_params={"project_id": project_id}
+        )
+            
+           
     def open(self, access_token, project_id):
         """Open a GNS3 project.
         
@@ -136,26 +156,14 @@ class ProjectsAPI(BaseAPI):
             "ProjectsApi->close_project_v3_projects_project_id_close_post",
             path_params={"project_id": project_id}
         )
-            
-    def duplicate(self, access_token, project_id, name=None):
-        """Duplicate a GNS3 project.
-        
-        Args:
-            access_token (str): The OAuth2 access token for authentication
-            project_id (str): The ID of the project to duplicate
-            name (str, optional): The name for the duplicated project
-            
-        Returns:
-            dict: The duplicated project details
-        """
-        body = {"name": name} if name else {}
+
+    def load(self, access_token, path):
         return self._call_api(
             access_token,
             ProjectsApi,
-            "duplicate_project_v3_projects_project_id_duplicate_post",
-            "ProjectsApi->duplicate_project_v3_projects_project_id_duplicate_post",
-            path_params={"project_id": project_id},
-            body=body
+            "load_project_v3_projects_load_post",
+            "ProjectsApi->load_project_v3_projects_load_post",
+            body={"path": path}
         )
             
     def export(self, access_token, project_id):
@@ -175,8 +183,8 @@ class ProjectsAPI(BaseAPI):
             "ProjectsApi->export_project_v3_projects_project_id_export_get",
             path_params={"project_id": project_id}
         )
-            
-    def import_project(self, access_token, project_file, name=None):
+
+    def import_(self, access_token, project_file, name=None):
         """Import a GNS3 project.
         
         Args:
@@ -199,21 +207,89 @@ class ProjectsAPI(BaseAPI):
             body=body
         )
             
-    def stats(self, access_token, project_id):
-        """Get statistics for a GNS3 project.
+    def duplicate(self, access_token, project_id, name=None):
+        """Duplicate a GNS3 project.
         
         Args:
             access_token (str): The OAuth2 access token for authentication
-            project_id (str): The ID of the project
+            project_id (str): The ID of the project to duplicate
+            name (str, optional): The name for the duplicated project
             
         Returns:
-            dict: The project statistics
+            dict: The duplicated project details
         """
+        body = {"name": name} if name else {}
         return self._call_api(
             access_token,
             ProjectsApi,
-            "get_project_stats_v3_projects_project_id_stats_get",
-            "ProjectsApi->get_project_stats_v3_projects_project_id_stats_get",
+            "duplicate_project_v3_projects_project_id_duplicate_post",
+            "ProjectsApi->duplicate_project_v3_projects_project_id_duplicate_post",
+            path_params={"project_id": project_id},
+            body=body
+        )
+
+    def notifications(self, access_token, project_id):
+        return self._call_api(
+            access_token,
+            ProjectsApi,
+            "project_http_notifications_v3_projects_project_id_notifications_get",
+            "ProjectsApi->project_http_notifications_v3_projects_project_id_notifications_get",
             path_params={"project_id": project_id}
+        )
+            
+    def locked(self, access_token, project_id):
+        return self._call_api(
+            access_token,
+            ProjectsApi,
+            "locked_project_v3_projects_project_id_locked_get",
+            "ProjectsApi->locked_project_v3_projects_project_id_locked_get",
+            path_params={"project_id": project_id}
+        )
+            
+    def lock(self, access_token, project_id):
+        return self._call_api(
+            access_token,
+            ProjectsApi,
+            "lock_project_v3_projects_project_id_lock_post",
+            "ProjectsApi->lock_project_v3_projects_project_id_lock_post",
+            path_params={"project_id": project_id}
+        )
+            
+    def unlock(self, access_token, project_id):
+        return self._call_api(
+            access_token,
+            ProjectsApi,
+            "unlock_project_v3_projects_project_id_unlock_post",
+            "ProjectsApi->unlock_project_v3_projects_project_id_unlock_post",
+            path_params={"project_id": project_id}
+        )
+            
+    def get_file(self, access_token, project_id, file_path):
+        return self._call_api(
+            access_token,
+            ProjectsApi,
+            "get_file_v3_projects_project_id_files_file_path_get",
+            "ProjectsApi->get_file_v3_projects_project_id_files_file_path_get",
+            path_params={"project_id": project_id, "file_path": file_path}
+        )
+            
+    def write_file(self, access_token, project_id, file_path, body):
+        return self._call_api(
+            access_token,
+            ProjectsApi,
+            "write_file_v3_projects_project_id_files_file_path_post",
+            "ProjectsApi->write_file_v3_projects_project_id_files_file_path_post",
+            path_params={"project_id": project_id, "file_path": file_path},
+            body=body
+        )
+            
+    def create_node_from_template(self, access_token, project_id, template_id, **kwargs):
+        return self._call_api(
+            access_token,
+            ProjectsApi,
+            "create_node_from_template_v3_projects_project_id_templates_template_id_post",
+            "ProjectsApi->create_node_from_template_v3_projects_project_id_templates_template_id_post",
+            path_params={"project_id": project_id, "template_id": template_id},
+            body=kwargs if kwargs else None
         )
 
