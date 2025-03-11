@@ -66,3 +66,52 @@ def test_handle_api_exception_with_non_json_body(api, mocker):
     assert result["status"] == 500
     assert result["reason"] == "Server Error"
     assert result["body"] == "Internal server error occurred"
+
+
+def test_handle_api_exception_with_json_array(api, mocker):
+    e = mocker.MagicMock()
+    e.status = 400
+    e.reason = "Bad Request"
+    e.body = json.dumps(["Error 1", "Error 2"])
+    
+    result = api._handle_api_exception(e, "test_operation")
+    
+    assert result["error"] == "API Error: test_operation"
+    assert result["status"] == 400
+    assert result["reason"] == "Bad Request"
+    assert result["detail"] == ["Error 1", "Error 2"]
+
+
+def test_call_api_exception(api, access_token, mocker):
+    mock_api_class = mocker.MagicMock()
+    mock_get_api_client = mocker.patch.object(api, '_get_api_client')
+    mock_client = mocker.MagicMock()
+    mock_config = mocker.MagicMock()
+    mock_get_api_client.return_value = (mock_client, mock_config)
+    
+    mock_client.__enter__.return_value = mock_client
+    mock_client.__exit__.return_value = None
+    
+    mock_client.default_headers = {}
+    
+    mock_api_instance = mocker.MagicMock()
+    mock_api_class.return_value = mock_api_instance
+    
+    from gns3client.openapi_client.exceptions import ApiException
+    mock_method = mocker.MagicMock()
+    mock_method.side_effect = ApiException(status=404, reason="Not Found")
+    mock_api_instance.some_method = mock_method
+    
+    mock_handle_exception = mocker.patch.object(api, '_handle_api_exception')
+    mock_handle_exception.return_value = {"error": "Mocked error response"}
+    
+    result = api._call_api(
+        access_token, 
+        mock_api_class, 
+        "some_method", 
+        "TestOp->some_method",
+        path_params={"id": "test-id"}
+    )
+    
+    assert result == {"error": "Mocked error response"}
+    mock_handle_exception.assert_called_once()
