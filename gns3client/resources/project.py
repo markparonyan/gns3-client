@@ -1,4 +1,4 @@
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List
 from gns3client.api.projects import ProjectsAPI
 from gns3client.api.nodes import NodesAPI
 from gns3client.api.links import LinksAPI
@@ -12,7 +12,7 @@ class Project:
     This class provides methods for working with a GNS3 project and its resources.
     """
     
-    def __init__(self, client, data: Dict[str, Any]):
+    def __init__(self, client, data: dict[str, Any] = None):
         """Initialize a Project instance.
         
         Args:
