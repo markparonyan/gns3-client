@@ -119,7 +119,6 @@ class ProjectsAPI(BaseAPI):
             "ProjectsApi->get_project_stats_v3_projects_project_id_stats_get",
             path_params={"project_id": project_id}
         )
-            
            
     def open(self, access_token, project_id):
         """Open a GNS3 project.

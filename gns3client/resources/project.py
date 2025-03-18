@@ -22,7 +22,7 @@ class Project:
         self._client = client
         self._data = data
         self._id = data.get('project_id')
-    
+    # TODO: checkout this properites
     @property
     def id(self) -> str:
         """Get the project ID.

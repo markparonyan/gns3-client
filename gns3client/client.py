@@ -41,7 +41,6 @@ class GNS3Client:
         if username and password and not access_token:
             self.login(username, password)
 
-    
     def login(self, username: str = None, password: str = None) -> str | None:
         """Login to the GNS3 server and get an access token.
         
@@ -74,63 +73,66 @@ class GNS3Client:
         self.access_token = access_token
         self._api_instances = {}
     
-    def version(self) -> Dict[str, Any]:
+    def version(self) -> dict[str, Any]:
         """Get the GNS3 controller version.
         
         Returns:
             dict: The version information
         """
-        controller_api = ControllerAPI(self.host)
-        return controller_api.version(self.access_token)
+        return self._get_api(ControllerAPI).version()
     
-    def list_projects(self) -> List[Project]:
+    def list_projects(self) -> list[Project]:
         """Get all projects.
         
         Returns:
             list: List of Project objects
         """
-        projects_api = ProjectsAPI(self.host)
-        projects_data = projects_api.list(self.access_token)
+        projects_data = self._get_api(ProjectsAPI).list()
         
         return [Project(self, data) for data in projects_data]
     
-    def get_project(self, project_id: str) -> Project:
-        """Get a project by ID.
+    def get_project(self, identifier: str) -> Project:
+        """Get a project by ID or name.
         
         Args:
-            project_id: The project ID
+            identifier: The project ID or name
             
         Returns:
             Project: The project object
+            
+        Raises:
+            ValueError: If no project with the provided name/ID exists
         """
-        projects_api = ProjectsAPI(self.host)
-        project_data = projects_api.get(self.access_token, project_id)
-        
-        return Project(self, project_data)
-    
-    def create_project(self, name: str, **kwargs) -> Project:
-        """Create a new project.
+        try:
+            project_data = self._get_api(ProjectsAPI).get(identifier)
+            return Project(self, project_data)
+        except Exception:
+            projects_data = self._get_api(ProjectsAPI).list()
+            for project_data in projects_data:
+                if project_data.get("name") == identifier:
+                    return Project(self, project_data)
+            
+            raise ValueError(f"No project found with identifier: {identifier}")
+
+    def import_project(self, project_file: bytes, name: str = None) -> Project:
+        """Import a project from a file.
         
         Args:
-            name: The project name
-            **kwargs: Additional project attributes
-            
-        Returns:
-            Project: The created project object
+            project_file: The project file content to import
+            name: The name for the imported project
         """
-        projects_api = ProjectsAPI(self.host)
-        project_data = projects_api.create(self.access_token, name, **kwargs)
-        
+        project_data = self._get_api(ProjectsAPI).import_(project_file, name)
         return Project(self, project_data)
     
+    
+
     def list_templates(self) -> List[Template]:
         """Get all templates.
         
         Returns:
             list: List of Template objects
         """
-        templates_api = TemplatesAPI(self.host)
-        templates_data = templates_api.list(self.access_token)
+        templates_data = self._get_api(TemplatesAPI).list()
         
         return [Template(self, data) for data in templates_data]
     
