@@ -13,7 +13,9 @@ pip install -U --index-url https://test.pypi.org/simple/ --extra-index-url https
 from gns3client import GNS3Client
 from tabulate import tabulate
 
-# Create a client instance
+# by default host will be 127.0.0.1:3080
+# and you will be automatically logged in
+# with username=admin, password=admin.
 client = GNS3Client()
 
 projects = client.list_projects()
