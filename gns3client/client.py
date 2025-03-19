@@ -81,6 +81,24 @@ class GNS3Client:
         """
         return self._get_api(ControllerAPI).version()
     
+    def create_project(self, name: str, **kwargs) -> Project:
+        """Create a new project.
+        
+        Args:
+            name: The name of the project
+            **kwargs: Additional project parameters
+            
+        Returns:
+            Project: The created Project object
+        """
+        project_data = {
+            "name": name
+        }
+        project_data.update(kwargs)
+        
+        project_data = self._get_api(ProjectsAPI).create(project_data)
+        return Project(self, project_data)
+    
     def list_projects(self) -> list[Project]:
         """Get all projects.
         

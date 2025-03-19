@@ -72,14 +72,33 @@ class Link:
         Returns:
             Link: The updated link instance
         """
-        links_api = LinksAPI(self._client.host)
-        self._data = links_api.get(self._client.access_token, self._project_id, self.id)
+        self._data = self._client._get_api(LinksAPI).get(self._project_id, self.id)
         return self
     
     def delete(self) -> None:
         """Delete the link."""
-        links_api = LinksAPI(self._client.host)
-        links_api.delete(self._client.access_token, self._project_id, self.id)
+        self._client._get_api(LinksAPI).delete(self._project_id, self.id)
+    
+    def update(self, **kwargs) -> 'Link':
+        """Update the link properties.
+        
+        Args:
+            **kwargs: Link attributes to update
+            
+        Returns:
+            Link: The updated link instance
+        """
+        self._data = self._client._get_api(LinksAPI).update(self._project_id, self.id, kwargs)
+        return self
+    
+    def reset(self) -> 'Link':
+        """Reset the link.
+        
+        Returns:
+            Link: The updated link instance
+        """
+        self._data = self._client._get_api(LinksAPI).reset(self._project_id, self.id)
+        return self
     
     def start_capture(self, capture_file_name: str = None, data_link_type: str = "DLT_EN10MB") -> 'Link':
         """Start packet capturing on the link.
@@ -91,8 +110,6 @@ class Link:
         Returns:
             Link: The updated link instance
         """
-        links_api = LinksAPI(self._client.host)
-        
         capture_data = {
             "data_link_type": data_link_type
         }
@@ -100,7 +117,7 @@ class Link:
         if capture_file_name:
             capture_data["capture_file_name"] = capture_file_name
             
-        self._data = links_api.start_capture(self._client.access_token, self._project_id, self.id, capture_data)
+        self._data = self._client._get_api(LinksAPI).start_capture(self._project_id, self.id, capture_data)
         return self
     
     def stop_capture(self) -> 'Link':
@@ -109,18 +126,24 @@ class Link:
         Returns:
             Link: The updated link instance
         """
-        links_api = LinksAPI(self._client.host)
-        self._data = links_api.stop_capture(self._client.access_token, self._project_id, self.id)
+        self._data = self._client._get_api(LinksAPI).stop_capture(self._project_id, self.id)
         return self
     
-    def get_pcap(self) -> bytes:
-        """Get the packet capture file.
+    def get_capture_stream(self) -> bytes:
+        """Get the packet capture stream.
         
         Returns:
-            bytes: The packet capture file data
+            bytes: The packet capture stream data
         """
-        links_api = LinksAPI(self._client.host)
-        return links_api.get_pcap(self._client.access_token, self._project_id, self.id)
+        return self._client._get_api(LinksAPI).get_capture_stream(self._project_id, self.id)
+    
+    def get_available_filters(self) -> List[str]:
+        """Get available packet filters for the link.
+        
+        Returns:
+            List[str]: List of available packet filters
+        """
+        return self._client._get_api(LinksAPI).get_available_filters(self._project_id, self.id)
     
     def __repr__(self) -> str:
         """String representation of the link.

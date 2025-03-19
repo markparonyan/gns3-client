@@ -65,8 +65,7 @@ class Project:
         Returns:
             Project: The updated project instance
         """
-        projects_api = ProjectsAPI(self._client.host)
-        self._data = projects_api.get(self._client.access_token, self.id)
+        self._data = self._client._get_api(ProjectsAPI).get(self.id)
         return self
     
     def open(self) -> 'Project':
@@ -75,8 +74,7 @@ class Project:
         Returns:
             Project: The updated project instance
         """
-        projects_api = ProjectsAPI(self._client.host)
-        projects_api.open(self._client.access_token, self.id)
+        self._client._get_api(ProjectsAPI).open(self.id)
         return self.refresh()
     
     def close(self) -> 'Project':
@@ -85,14 +83,12 @@ class Project:
         Returns:
             Project: The updated project instance
         """
-        projects_api = ProjectsAPI(self._client.host)
-        projects_api.close(self._client.access_token, self.id)
+        self._client._get_api(ProjectsAPI).close(self.id)
         return self.refresh()
     
     def delete(self) -> None:
         """Delete the project."""
-        projects_api = ProjectsAPI(self._client.host)
-        projects_api.delete(self._client.access_token, self.id)
+        self._client._get_api(ProjectsAPI).delete(self.id)
     
     def update(self, **kwargs) -> 'Project':
         """Update the project properties.
@@ -103,8 +99,7 @@ class Project:
         Returns:
             Project: The updated project instance
         """
-        projects_api = ProjectsAPI(self._client.host)
-        self._data = projects_api.update(self._client.access_token, self.id, **kwargs)
+        self._data = self._client._get_api(ProjectsAPI).update(self.id, **kwargs)
         return self
     
     def list_nodes(self) -> List['Node']:
@@ -115,8 +110,7 @@ class Project:
         """
         from gns3client.resources.node import Node
         
-        nodes_api = NodesAPI(self._client.host)
-        nodes_data = nodes_api.list(self._client.access_token, self.id)
+        nodes_data = self._client._get_api(NodesAPI).list(self.id)
         
         return [Node(self._client, self.id, node_data) for node_data in nodes_data]
     
@@ -131,8 +125,7 @@ class Project:
         """
         from gns3client.resources.node import Node
         
-        nodes_api = NodesAPI(self._client.host)
-        node_data = nodes_api.get(self._client.access_token, self.id, node_id)
+        node_data = self._client._get_api(NodesAPI).get(self.id, node_id)
         
         return Node(self._client, self.id, node_data)
     
@@ -150,8 +143,6 @@ class Project:
         """
         from gns3client.resources.node import Node
         
-        nodes_api = NodesAPI(self._client.host)
-        
         node_data = {
             "name": name,
             "node_type": node_type,
@@ -159,26 +150,29 @@ class Project:
         }
         node_data.update(kwargs)
         
-        node_data = nodes_api.create(self._client.access_token, self.id, node_data)
+        node_data = self._client._get_api(NodesAPI).create(self.id, node_data)
         
         return Node(self._client, self.id, node_data)
     
-    def update_node(self, node_id: str, **kwargs) -> 'Node':
-        """Update a node in the project.
+    def start_all(self) -> None:
+        """Start all nodes in the project."""
+        self._client._get_api(NodesAPI).start_all(self.id)
         
-        Args:
-            node_id: The ID of the node
-            **kwargs: Node attributes to update
-            
-        Returns:
-            Node: The updated Node object
-        """
-        from gns3client.resources.node import Node
+    def stop_all(self) -> None:
+        """Stop all nodes in the project."""
+        self._client._get_api(NodesAPI).stop_all(self.id)
         
-        nodes_api = NodesAPI(self._client.host)
-        node_data = nodes_api.update(self._client.access_token, self.id, node_id, **kwargs)
+    def suspend_all(self) -> None:
+        """Suspend all nodes in the project."""
+        self._client._get_api(NodesAPI).suspend_all(self.id)
         
-        return Node(self._client, self.id, node_data)
+    def reload_all(self) -> None:
+        """Reload all nodes in the project."""
+        self._client._get_api(NodesAPI).reload_all(self.id)
+        
+    def reset_console_all(self) -> None:
+        """Reset console for all nodes in the project."""
+        self._client._get_api(NodesAPI).reset_console_all(self.id)
     
     def delete_node(self, node_id: str) -> None:
         """Delete a node from the project.
@@ -186,72 +180,7 @@ class Project:
         Args:
             node_id: The ID of the node
         """
-        nodes_api = NodesAPI(self._client.host)
-        nodes_api.delete(self._client.access_token, self.id, node_id)
-    
-    def start_node(self, node_id: str) -> 'Node':
-        """Start a node in the project.
-        
-        Args:
-            node_id: The ID of the node
-            
-        Returns:
-            Node: The updated Node object
-        """
-        from gns3client.resources.node import Node
-        
-        nodes_api = NodesAPI(self._client.host)
-        node_data = nodes_api.start(self._client.access_token, self.id, node_id)
-        
-        return Node(self._client, self.id, node_data)
-    
-    def stop_node(self, node_id: str) -> 'Node':
-        """Stop a node in the project.
-        
-        Args:
-            node_id: The ID of the node
-            
-        Returns:
-            Node: The updated Node object
-        """
-        from gns3client.resources.node import Node
-        
-        nodes_api = NodesAPI(self._client.host)
-        node_data = nodes_api.stop(self._client.access_token, self.id, node_id)
-        
-        return Node(self._client, self.id, node_data)
-    
-    def suspend_node(self, node_id: str) -> 'Node':
-        """Suspend a node in the project.
-        
-        Args:
-            node_id: The ID of the node
-            
-        Returns:
-            Node: The updated Node object
-        """
-        from gns3client.resources.node import Node
-        
-        nodes_api = NodesAPI(self._client.host)
-        node_data = nodes_api.suspend(self._client.access_token, self.id, node_id)
-        
-        return Node(self._client, self.id, node_data)
-    
-    def reload_node(self, node_id: str) -> 'Node':
-        """Reload a node in the project.
-        
-        Args:
-            node_id: The ID of the node
-            
-        Returns:
-            Node: The updated Node object
-        """
-        from gns3client.resources.node import Node
-        
-        nodes_api = NodesAPI(self._client.host)
-        node_data = nodes_api.reload(self._client.access_token, self.id, node_id)
-        
-        return Node(self._client, self.id, node_data)
+        self._client._get_api(NodesAPI).delete(self.id, node_id)
     
     def list_links(self) -> List['Link']:
         """List all links in the project.
@@ -261,8 +190,7 @@ class Project:
         """
         from gns3client.resources.link import Link
         
-        links_api = LinksAPI(self._client.host)
-        links_data = links_api.list(self._client.access_token, self.id)
+        links_data = self._client._get_api(LinksAPI).list(self.id)
         
         return [Link(self._client, self.id, link_data) for link_data in links_data]
     
@@ -277,8 +205,7 @@ class Project:
         """
         from gns3client.resources.link import Link
         
-        links_api = LinksAPI(self._client.host)
-        link_data = links_api.get(self._client.access_token, self.id, link_id)
+        link_data = self._client._get_api(LinksAPI).get(self.id, link_id)
         
         return Link(self._client, self.id, link_data)
     
@@ -293,13 +220,11 @@ class Project:
         """
         from gns3client.resources.link import Link
         
-        links_api = LinksAPI(self._client.host)
-        
         link_data = {
             "nodes": nodes
         }
         
-        link_data = links_api.create(self._client.access_token, self.id, link_data)
+        link_data = self._client._get_api(LinksAPI).create(self.id, link_data)
         
         return Link(self._client, self.id, link_data)
     
@@ -309,8 +234,7 @@ class Project:
         Args:
             link_id: The ID of the link
         """
-        links_api = LinksAPI(self._client.host)
-        links_api.delete(self._client.access_token, self.id, link_id)
+        self._client._get_api(LinksAPI).delete(self.id, link_id)
     
     def list_drawings(self) -> List[Dict[str, Any]]:
         """List all drawings in the project.
@@ -318,8 +242,7 @@ class Project:
         Returns:
             List[Dict[str, Any]]: List of drawing data dictionaries
         """
-        drawings_api = DrawingsAPI(self._client.host)
-        return drawings_api.list(self._client.access_token, self.id)
+        return self._client._get_api(DrawingsAPI).list(self.id)
     
     def get_drawing(self, drawing_id: str) -> Dict[str, Any]:
         """Get a specific drawing in the project.
@@ -330,8 +253,7 @@ class Project:
         Returns:
             Dict[str, Any]: The drawing data dictionary
         """
-        drawings_api = DrawingsAPI(self._client.host)
-        return drawings_api.get(self._client.access_token, self.id, drawing_id)
+        return self._client._get_api(DrawingsAPI).get(self.id, drawing_id)
     
     def create_drawing(self, drawing_data: Dict[str, Any]) -> Dict[str, Any]:
         """Create a new drawing in the project.
@@ -342,8 +264,7 @@ class Project:
         Returns:
             Dict[str, Any]: The created drawing data dictionary
         """
-        drawings_api = DrawingsAPI(self._client.host)
-        return drawings_api.create(self._client.access_token, self.id, drawing_data)
+        return self._client._get_api(DrawingsAPI).create(self.id, drawing_data)
     
     def update_drawing(self, drawing_id: str, drawing_data: Dict[str, Any]) -> Dict[str, Any]:
         """Update a drawing in the project.
@@ -355,8 +276,7 @@ class Project:
         Returns:
             Dict[str, Any]: The updated drawing data dictionary
         """
-        drawings_api = DrawingsAPI(self._client.host)
-        return drawings_api.update(self._client.access_token, self.id, drawing_id, drawing_data)
+        return self._client._get_api(DrawingsAPI).update(self.id, drawing_id, drawing_data)
     
     def delete_drawing(self, drawing_id: str) -> Dict[str, Any]:
         """Delete a drawing from the project.
@@ -367,8 +287,7 @@ class Project:
         Returns:
             Dict[str, Any]: The response data
         """
-        drawings_api = DrawingsAPI(self._client.host)
-        return drawings_api.delete(self._client.access_token, self.id, drawing_id)
+        return self._client._get_api(DrawingsAPI).delete(self.id, drawing_id)
     
     def list_snapshots(self) -> List[Dict[str, Any]]:
         """List all snapshots for the project.
@@ -376,8 +295,7 @@ class Project:
         Returns:
             List[Dict[str, Any]]: List of snapshot data dictionaries
         """
-        snapshots_api = SnapshotsAPI(self._client.host)
-        return snapshots_api.list(self._client.access_token, self.id)
+        return self._client._get_api(SnapshotsAPI).list(self.id)
     
     def get_snapshot(self, snapshot_id: str) -> Dict[str, Any]:
         """Get a specific snapshot.
@@ -388,8 +306,7 @@ class Project:
         Returns:
             Dict[str, Any]: The snapshot data dictionary
         """
-        snapshots_api = SnapshotsAPI(self._client.host)
-        return snapshots_api.get(self._client.access_token, self.id, snapshot_id)
+        return self._client._get_api(SnapshotsAPI).get(self.id, snapshot_id)
     
     def create_snapshot(self, name: str) -> Dict[str, Any]:
         """Create a new snapshot.
@@ -400,8 +317,7 @@ class Project:
         Returns:
             Dict[str, Any]: The created snapshot data dictionary
         """
-        snapshots_api = SnapshotsAPI(self._client.host)
-        return snapshots_api.create(self._client.access_token, self.id, name)
+        return self._client._get_api(SnapshotsAPI).create(self.id, name)
     
     def restore_snapshot(self, snapshot_id: str) -> Dict[str, Any]:
         """Restore a snapshot.
@@ -412,8 +328,7 @@ class Project:
         Returns:
             Dict[str, Any]: The response data
         """
-        snapshots_api = SnapshotsAPI(self._client.host)
-        return snapshots_api.restore(self._client.access_token, self.id, snapshot_id)
+        return self._client._get_api(SnapshotsAPI).restore(self.id, snapshot_id)
     
     def delete_snapshot(self, snapshot_id: str) -> Dict[str, Any]:
         """Delete a snapshot.
@@ -424,8 +339,7 @@ class Project:
         Returns:
             Dict[str, Any]: The response data
         """
-        snapshots_api = SnapshotsAPI(self._client.host)
-        return snapshots_api.delete(self._client.access_token, self.id, snapshot_id)
+        return self._client._get_api(SnapshotsAPI).delete(self.id, snapshot_id)
     
     def __repr__(self) -> str:
         """String representation of the project.

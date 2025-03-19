@@ -164,7 +164,7 @@ class Node:
         nodes_api = NodesAPI(self._client.host)
         return nodes_api.get_file(self._client.access_token, self._project_id, self.id, path)
     
-    def write_file(self, path: str, data: str) -> None:
+    def post_file(self, path: str, data: str) -> None:
         """Write data to a file on the node.
         
         Args:
@@ -172,7 +172,109 @@ class Node:
             data: The data to write
         """
         nodes_api = NodesAPI(self._client.host)
-        nodes_api.write_file(self._client.access_token, self._project_id, self.id, path, data)
+        nodes_api.post_file(self._client.access_token, self._project_id, self.id, path, data)
+    
+    def duplicate(self) -> 'Node':
+        """Creates a copy of the node.
+        
+        Returns:
+            Node: The duplicated node instance
+        """
+        nodes_api = NodesAPI(self._client.host)
+        node_data = nodes_api.duplicate(self._client.access_token, self._project_id, self.id)
+        return Node(self._client, self._project_id, node_data)
+    
+    def isolate(self) -> 'Node':
+        """Isolate the node from the network.
+        
+        Returns:
+            Node: The updated node instance
+        """
+        nodes_api = NodesAPI(self._client.host)
+        self._data = nodes_api.isolate(self._client.access_token, self._project_id, self.id)
+        return self
+    
+    def unisolate(self) -> 'Node':
+        """Remove isolation from the node.
+        
+        Returns:
+            Node: The updated node instance
+        """
+        nodes_api = NodesAPI(self._client.host)
+        self._data = nodes_api.unisolate(self._client.access_token, self._project_id, self.id)
+        return self
+    
+    def links(self) -> List[Dict[str, Any]]:
+        """Get links connected to this node.
+        
+        Returns:
+            List[Dict[str, Any]]: List of links
+        """
+        nodes_api = NodesAPI(self._client.host)
+        return nodes_api.links(self._client.access_token, self._project_id, self.id)
+    
+    def console_reset(self) -> 'Node':
+        """Reset the console of the node.
+        
+        Returns:
+            Node: The updated node instance
+        """
+        nodes_api = NodesAPI(self._client.host)
+        self._data = nodes_api.console_reset(self._client.access_token, self._project_id, self.id)
+        return self
+    
+    def auto_idlepc(self) -> Dict[str, Any]:
+        """Find the best idlepc value.
+        
+        Returns:
+            Dict[str, Any]: The result
+        """
+        nodes_api = NodesAPI(self._client.host)
+        return nodes_api.auto_idlepc(self._client.access_token, self._project_id, self.id)
+    
+    def idlepc_proposals(self) -> List[str]:
+        """Get idlepc proposals.
+        
+        Returns:
+            List[str]: List of idlepc proposals
+        """
+        nodes_api = NodesAPI(self._client.host)
+        return nodes_api.idlepc_proposals(self._client.access_token, self._project_id, self.id)
+    
+    def create_disk_image(self, disk_path: str, **kwargs) -> Dict[str, Any]:
+        """Create a disk image.
+        
+        Args:
+            disk_path: Path to the disk image
+            **kwargs: Additional parameters
+            
+        Returns:
+            Dict[str, Any]: The result
+        """
+        nodes_api = NodesAPI(self._client.host)
+        return nodes_api.create_disk_image(self._client.access_token, self._project_id, self.id, disk_path, **kwargs)
+    
+    def update_disk_image(self, disk_path: str, **kwargs) -> Dict[str, Any]:
+        """Update a disk image.
+        
+        Args:
+            disk_path: Path to the disk image
+            **kwargs: Additional parameters
+            
+        Returns:
+            Dict[str, Any]: The result
+        """
+        nodes_api = NodesAPI(self._client.host)
+        return nodes_api.update_disk_image(self._client.access_token, self._project_id, self.id, disk_path, **kwargs)
+    
+    def delete_disk_image(self, disk_path: str) -> None:
+        """Delete a disk image.
+        
+        Args:
+            disk_path: Path to the disk image
+        """
+        nodes_api = NodesAPI(self._client.host)
+        nodes_api.delete_disk_image(self._client.access_token, self._project_id, self.id, disk_path)
     
     def __repr__(self) -> str:
         """String representation of the node.
