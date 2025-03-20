@@ -1,16 +1,12 @@
 from __future__ import annotations
-from typing import Optional, Dict, Type, Any, List, Callable
+from typing import Optional, Dict, Type, Any, List
 
 
 from gns3client.api.projects import ProjectsAPI
-from gns3client.api.nodes import NodesAPI
-from gns3client.api.links import LinksAPI
-from gns3client.api.users import UsersAPI
 from gns3client.api.templates import TemplatesAPI
-from gns3client.api.drawings import DrawingsAPI
-from gns3client.api.snapshots import SnapshotsAPI
 from gns3client.api.controller import ControllerAPI
 from gns3client.api.base_api import BaseAPI
+from gns3client.api.users import UsersAPI
 from gns3client.resources.project import Project
 from gns3client.resources.template import Template
 
@@ -57,7 +53,7 @@ class GNS3Client:
         username = username or self.username
         password = password or self.password
         
-        response = self.users.login(username, password)
+        response = self._get_api(UsersAPI).login(username, password)
         if response and "access_token" in response:
             self.access_token = response["access_token"]
             return self.access_token
@@ -141,8 +137,6 @@ class GNS3Client:
         """
         project_data = self._get_api(ProjectsAPI).import_(project_file, name)
         return Project(self, project_data)
-    
-    
 
     def list_templates(self) -> List[Template]:
         """Get all templates.
