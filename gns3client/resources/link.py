@@ -75,10 +75,6 @@ class Link:
         self._data = self._client._get_api(LinksAPI).get(self._project_id, self.id)
         return self
     
-    def delete(self) -> None:
-        """Delete the link."""
-        self._client._get_api(LinksAPI).delete(self._project_id, self.id)
-    
     def update(self, **kwargs) -> 'Link':
         """Update the link properties.
         

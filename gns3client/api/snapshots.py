@@ -23,24 +23,6 @@ class SnapshotsAPI(BaseAPI):
             path_params={"project_id": project_id}
         )
             
-    def get(self, access_token, project_id, snapshot_id):
-        """Get a specific snapshot.
-        
-        Args:
-            access_token (str): The OAuth2 access token for authentication
-            project_id (str): The ID of the project
-            snapshot_id (str): The ID of the snapshot
-            
-        Returns:
-            dict: The snapshot details
-        """
-        return self._call_api(
-            access_token,
-            ProjectsApi,
-            "get_snapshot_v3_projects_project_id_snapshots_snapshot_id_get",
-            "ProjectsApi->get_snapshot_v3_projects_project_id_snapshots_snapshot_id_get",
-            path_params={"project_id": project_id, "snapshot_id": snapshot_id}
-        )
             
     def create(self, access_token, project_id, name):
         """Create a new snapshot.
@@ -59,27 +41,6 @@ class SnapshotsAPI(BaseAPI):
             "create_snapshot_v3_projects_project_id_snapshots_post",
             "ProjectsApi->create_snapshot_v3_projects_project_id_snapshots_post",
             path_params={"project_id": project_id},
-            body={"name": name}
-        )
-            
-    def update(self, access_token, project_id, snapshot_id, name):
-        """Update a snapshot.
-        
-        Args:
-            access_token (str): The OAuth2 access token for authentication
-            project_id (str): The ID of the project
-            snapshot_id (str): The ID of the snapshot to update
-            name (str): The new name for the snapshot
-            
-        Returns:
-            dict: The updated snapshot details
-        """
-        return self._call_api(
-            access_token,
-            ProjectsApi,
-            "update_snapshot_v3_projects_project_id_snapshots_snapshot_id_put",
-            "ProjectsApi->update_snapshot_v3_projects_project_id_snapshots_snapshot_id_put",
-            path_params={"project_id": project_id, "snapshot_id": snapshot_id},
             body={"name": name}
         )
             

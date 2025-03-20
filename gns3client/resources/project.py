@@ -4,6 +4,7 @@ from gns3client.api.nodes import NodesAPI
 from gns3client.api.links import LinksAPI
 from gns3client.api.drawings import DrawingsAPI
 from gns3client.api.snapshots import SnapshotsAPI
+from gns3client.api.templates import TemplatesAPI
 
 
 class Project:
@@ -289,38 +290,73 @@ class Project:
         """
         return self._client._get_api(DrawingsAPI).delete(self.id, drawing_id)
     
-    def list_snapshots(self) -> List[Dict[str, Any]]:
+    def list_snapshots(self) -> List['Snapshot']:
         """List all snapshots for the project.
         
         Returns:
-            List[Dict[str, Any]]: List of snapshot data dictionaries
+            List[Snapshot]: List of Snapshot objects
         """
-        return self._client._get_api(SnapshotsAPI).list(self.id)
+        from gns3client.resources.snapshot import Snapshot
+        
+        snapshots_data = self._client._get_api(SnapshotsAPI).list(self._client.access_token, self.id)
+        
+        return [Snapshot(self._client, self.id, snapshot_data) for snapshot_data in snapshots_data]
     
-    def get_snapshot(self, snapshot_id: str) -> Dict[str, Any]:
-        """Get a specific snapshot.
+    def get_snapshot_by_id(self, snapshot_id: str) -> 'Snapshot':
+        """Get a snapshot by its ID.
         
         Args:
             snapshot_id: The ID of the snapshot
             
         Returns:
-            Dict[str, Any]: The snapshot data dictionary
+            Snapshot: The Snapshot object, or None if not found
         """
-        return self._client._get_api(SnapshotsAPI).get(self.id, snapshot_id)
+        from gns3client.resources.snapshot import Snapshot
+        
+        snapshots_data = self._client._get_api(SnapshotsAPI).list(self._client.access_token, self.id)
+        
+        for snapshot_data in snapshots_data:
+            if snapshot_data.get('snapshot_id') == snapshot_id:
+                return Snapshot(self._client, self.id, snapshot_data)
+        
+        return None
     
-    def create_snapshot(self, name: str) -> Dict[str, Any]:
-        """Create a new snapshot.
+    def get_snapshot_by_name(self, name: str) -> 'Snapshot':
+        """Get a snapshot by its name.
         
         Args:
             name: The name of the snapshot
             
         Returns:
-            Dict[str, Any]: The created snapshot data dictionary
+            Snapshot: The Snapshot object, or None if not found
         """
-        return self._client._get_api(SnapshotsAPI).create(self.id, name)
+        from gns3client.resources.snapshot import Snapshot
+        
+        snapshots_data = self._client._get_api(SnapshotsAPI).list(self._client.access_token, self.id)
+        
+        for snapshot_data in snapshots_data:
+            if snapshot_data.get('name') == name:
+                return Snapshot(self._client, self.id, snapshot_data)
+        
+        return None
+    
+    def create_snapshot(self, name: str) -> 'Snapshot':
+        """Create a new snapshot of the current project state.
+        
+        Args:
+            name: The name of the snapshot
+            
+        Returns:
+            Snapshot: The created Snapshot object
+        """
+        from gns3client.resources.snapshot import Snapshot
+        
+        snapshot_data = self._client._get_api(SnapshotsAPI).create(self._client.access_token, self.id, name)
+        
+        return Snapshot(self._client, self.id, snapshot_data)
     
     def restore_snapshot(self, snapshot_id: str) -> Dict[str, Any]:
-        """Restore a snapshot.
+        """Restore the project to a snapshot state.
         
         Args:
             snapshot_id: The ID of the snapshot to restore
@@ -328,7 +364,14 @@ class Project:
         Returns:
             Dict[str, Any]: The response data
         """
-        return self._client._get_api(SnapshotsAPI).restore(self.id, snapshot_id)
+        snapshot = self.get_snapshot_by_id(snapshot_id)
+        if not snapshot:
+            raise ValueError(f"No snapshot found with ID: {snapshot_id}")
+        
+        result = snapshot.restore()
+        # Refresh project data after restore
+        self.refresh()
+        return result
     
     def delete_snapshot(self, snapshot_id: str) -> Dict[str, Any]:
         """Delete a snapshot.
@@ -339,7 +382,62 @@ class Project:
         Returns:
             Dict[str, Any]: The response data
         """
-        return self._client._get_api(SnapshotsAPI).delete(self.id, snapshot_id)
+        snapshot = self.get_snapshot_by_id(snapshot_id)
+        if not snapshot:
+            raise ValueError(f"No snapshot found with ID: {snapshot_id}")
+        
+        return snapshot.delete()
+    
+    def list_templates(self) -> List['Template']:
+        """List all templates available on the server.
+        
+        Returns:
+            List[Template]: List of Template objects
+        """
+        from gns3client.resources.template import Template
+        
+        templates_data = self._client._get_api(TemplatesAPI).list(self._client.access_token)
+        
+        return [Template(self._client, template_data) for template_data in templates_data]
+    
+    def get_template(self, template_id: str) -> 'Template':
+        """Get a specific template.
+        
+        Args:
+            template_id: The ID of the template
+            
+        Returns:
+            Template: The Template object
+        """
+        from gns3client.resources.template import Template
+        
+        template_data = self._client._get_api(TemplatesAPI).get(self._client.access_token, template_id)
+        
+        return Template(self._client, template_data)
+    
+    def create_template(self, name: str, **kwargs) -> 'Template':
+        """Create a new template.
+        
+        Args:
+            name: The name of the template
+            **kwargs: Additional template parameters
+            
+        Returns:
+            Template: The created Template object
+        """
+        from gns3client.resources.template import Template
+        
+        template_data = self._client._get_api(TemplatesAPI).create(self._client.access_token, name, **kwargs)
+        
+        return Template(self._client, template_data)
+    
+    def delete_template(self, template_id: str) -> None:
+        """Delete a template.
+        
+        Args:
+            template_id: The ID of the template to delete
+        """
+        self._client._get_api(TemplatesAPI).delete(self._client.access_token, template_id)
     
     def __repr__(self) -> str:
         """String representation of the project.
@@ -347,4 +445,4 @@ class Project:
         Returns:
             str: String representation
         """
-        return f"<Project id={self.id} name={self.name}>" 
+        return f"<Project id={self.id} name={self.name}>"

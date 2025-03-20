@@ -77,6 +77,38 @@ class GNS3Client:
         """
         return self._get_api(ControllerAPI).version()
     
+    def stats(self) -> dict[str, Any]:
+        """Get the GNS3 controller statistics.
+        
+        Returns:
+            dict: The statistics information
+        """
+        return self._get_api(ControllerAPI).stats()
+        
+    def shutdown(self) -> dict[str, Any]:
+        """Shutdown the GNS3 controller.
+        
+        Returns:
+            dict: The response data
+        """
+        return self._get_api(ControllerAPI).shutdown()
+        
+    def reload(self) -> dict[str, Any]:
+        """Reload the GNS3 controller.
+        
+        Returns:
+            dict: The response data
+        """
+        return self._get_api(ControllerAPI).reload()
+        
+    def notifications(self) -> list[dict[str, Any]]:
+        """Get the GNS3 controller notifications.
+        
+        Returns:
+            list: The list of notifications
+        """
+        return self._get_api(ControllerAPI).notifications()
+    
     def create_project(self, name: str, **kwargs) -> Project:
         """Create a new project.
         

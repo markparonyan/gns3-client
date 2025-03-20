@@ -107,11 +107,6 @@ class Node:
         self._data = nodes_api.update(self._client.access_token, self._project_id, self.id, **kwargs)
         return self
     
-    def delete(self) -> None:
-        """Delete the node."""
-        nodes_api = NodesAPI(self._client.host)
-        nodes_api.delete(self._client.access_token, self._project_id, self.id)
-    
     def start(self) -> 'Node':
         """Start the node.
         

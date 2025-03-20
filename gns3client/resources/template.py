@@ -78,11 +78,6 @@ class Template:
         self._data = templates_api.update(self._client.access_token, self.id, kwargs)
         return self
     
-    def delete(self) -> None:
-        """Delete the template."""
-        templates_api = TemplatesAPI(self._client.host)
-        templates_api.delete(self._client.access_token, self.id)
-    
     def duplicate(self, name: str = None) -> Dict[str, Any]:
         """Duplicate the template.
         
@@ -94,11 +89,7 @@ class Template:
         """
         templates_api = TemplatesAPI(self._client.host)
         
-        duplicate_data = {}
-        if name:
-            duplicate_data["name"] = name
-            
-        return templates_api.duplicate_template(self._client.access_token, self.id, duplicate_data)
+        return templates_api.duplicate_template(self._client.access_token, self.id, name)
     
     def __repr__(self) -> str:
         """String representation of the template.
