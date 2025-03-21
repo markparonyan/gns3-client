@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+{{ super() }}
+
+<!-- Add a feedback section at the bottom of each page -->
+<div class="feedback-section" style="margin-top: 5rem; padding: 1rem; border-top: 1px solid var(--md-default-fg-color--lightest);">
+    <h2>Have feedback?</h2>
+    <p>
+        If you found an issue with this documentation or have suggestions for improvement, 
+        please <a href="https://github.com/markparonyan/gns3-client/issues/new?labels=documentation" target="_blank">open an issue</a>.
+    </p>
+</div>
+{% endblock %} 

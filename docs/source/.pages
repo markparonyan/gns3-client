@@ -1,0 +1,9 @@
+title: GNS3 Client
+arrange:
+  - index.md
+  - features.md
+  - tutorial
+  - api
+  - development
+  - help.md
+  - changelog.md 
