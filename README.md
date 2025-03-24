@@ -1,11 +1,9 @@
 # GNS3 Client
 
-## Quick Start
-
 ### Installation
 
 ```bash
-pip install gns3client
+pip install -U --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple gns3client
 ```
 
 ### Simple Example
