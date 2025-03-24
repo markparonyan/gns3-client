@@ -1,19 +1,5 @@
 # GNS3 Client
 
-## What Problem GNS3 Client Solves
-
-GNS3 Client simplifies interacting with [GNS3](https://gns3.com/) through code. It solves several key challenges:
-
-- **Manual Configuration**: Building networks in GNS3 GUI can be repetitive and time-consuming. GNS3 Client lets you automate topology creation and management.
-  
-- **Integration Challenges**: Incorporating GNS3 into larger workflows or testing pipelines is difficult without programmatic access. GNS3 Client provides a clean Python API.
-
-- **Topology Consistency**: Ensures consistent deployment of network topologies across different environments through code-based definitions.
-
-- **Educational Scaling**: Enables instructors to rapidly deploy identical lab environments for many students.
-
-- **Test Automation**: Allows integration of GNS3 network simulations into automated testing workflows.
-
 ## Quick Start
 
 ### Installation
