@@ -1,0 +1,136 @@
+site_name: GNS3 Client
+site_description: A Python client library for interacting with the GNS3 API
+site_url: https://markparonyan.github.io/gns3-client/
+site_author: Mark Paronyan
+repo_url: https://github.com/markparonyan/gns3-client
+repo_name: markparonyan/gns3-client
+docs_dir: source
+
+theme:
+  name: material
+  custom_dir: source/overrides
+  palette:
+  - media: '(prefers-color-scheme: light)'
+    scheme: default
+    primary: blue
+    accent: blue
+    toggle:
+      icon: material/weather-night
+      name: Switch to dark mode
+  - media: '(prefers-color-scheme: dark)'
+    scheme: slate
+    primary: blue
+    accent: blue
+    toggle:
+      icon: material/weather-sunny
+      name: Switch to light mode
+  features:
+  # Content
+  - content.code.annotate
+  - content.code.copy
+  - content.footnote.tooltips
+  - content.tabs.link
+  - content.tooltips
+  
+  # Navigation
+  - navigation.tabs
+  - navigation.tabs.sticky
+  - navigation.top
+  - navigation.path
+  
+  # Search
+  - search.highlight
+  - search.share
+  - search.suggest
+  
+  # Table of contents
+  - toc.follow
+  icon:
+    repo: fontawesome/brands/github-alt
+  language: en
+
+plugins:
+  # Material for MkDocs
+  search:
+  # Python API docs
+  mkdocstrings:
+    handlers:
+      python:
+        paths: [gns3client]
+        options:
+          show_source: true
+          show_root_heading: true
+          heading_level: 3
+
+markdown_extensions:
+  # Python Markdown
+  abbr:
+  attr_list:
+  footnotes:
+  md_in_html:
+  tables:
+  toc:
+    permalink: true
+
+  # Python Markdown Extensions
+  pymdownx.betterem:
+    smart_enable: all
+  pymdownx.caret:
+  pymdownx.highlight:
+    anchor_linenums: true
+    line_spans: __span
+  pymdownx.inlinehilite:
+  pymdownx.keys:
+  pymdownx.mark:
+  pymdownx.superfences:
+    custom_fences:
+    - name: mermaid
+      class: mermaid
+  pymdownx.tilde:
+
+  # pymdownx blocks
+  pymdownx.blocks.admonition:
+    types:
+    - note
+    - attention
+    - caution
+    - danger
+    - error
+    - tip
+    - hint
+    - warning
+    # Custom types
+    - info
+    - check
+  pymdownx.blocks.details:
+  pymdownx.blocks.tab:
+    alternate_style: True
+  
+  # Other
+  pymdownx.tasklist:
+    custom_checkbox: true
+  def_list:
+  mdx_include:
+    base_path: ".."
+
+nav:
+  - GNS3 Client: index.md
+  - API Reference:
+    - GNS3Client: api/client.md
+    - Project: api/projects-api.md
+    - Node: api/nodes-api.md
+    - Link: api/links-api.md
+    - Template: api/templates-api.md
+    - Snapshot: api/snapshots-api.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/github-alt
+      link: https://github.com/markparonyan/gns3-client
+  homepage: https://github.com/markparonyan/gns3-client
+  
+extra_css:
+  - assets/css/custom.css
+
+extra_javascript:
+  - assets/js/custom.js 

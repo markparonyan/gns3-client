@@ -1,0 +1,80 @@
+[tool.poetry]
+name = "gns3client"
+version = "0.1.15"
+description = "GNS3 client"
+authors = ["Mark Paronyan <markparonian@gmail.com>"]
+license = "GPL-3.0"
+readme = "README.md"
+repository = "https://github.com/markparonyan/gns3-client"
+homepage = "https://github.com/markparonyan/gns3-client"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Operating System :: OS Independent",
+]
+keywords = ["gns3", "networking", "api", "client"]
+
+[tool.poetry.dependencies]
+python = ">=3.9"
+urllib3 = ">=1.26.0"
+certifi = ">=2023.7.22"
+requests = ">=2.25.0"
+typing-extensions = ">=4.0.0"
+frozendict = ">=2.0.0"  
+python-dateutil = ">=2.8.0"
+click = ">=8.0.0"
+
+[tool.poetry.group.dev.dependencies]
+mypy = ">=1.0.0"
+ruff = "^0.9.10"
+bashate = "^2.1.1"
+pytest-mock = "^3.14.0"
+pytest-cov = "^6.0.0"
+
+[tool.poetry.group.docs.dependencies]
+mkdocs = ">=1.5.0"
+mkdocs-material = { version = ">=9.4.0", extras = ["imaging"] }
+pymdown-extensions = ">=10.0"
+mkdocstrings = ">=0.23.0"
+mkdocstrings-python = ">=1.7.0" 
+markdown = ">=3.5"
+mdx-include = ">=1.4.2"
+pillow = ">=10.0.0"
+cairosvg = ">=2.7.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+# **** Tests configuration ****
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*"
+addopts = "--cov=gns3client --cov-report=term-missing --cov-fail-under=80"
+
+[tool.coverage.run]
+source = ["gns3client"]
+omit = ["tests/*", "gns3client/openapi_client/*", "*/__init__.py"]
+dynamic_context = "test_function"
+
+[tool.coverage.report]
+exclude_lines = [
+    "import .*",
+    "from .* import .*",
+    "pragma: no cover",
+    "@abstractmethod",
+    "raise NotImplementedError",
+    "def __repr__",
+    "if TYPE_CHECKING:",
+    "if typing.TYPE_CHECKING:"
+]
+
+exclude_also = ["__init__.py$"]
