@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+from datetime import datetime
 from enum import IntEnum, StrEnum
 from typing import Annotated, Any, Literal
 from uuid import UUID
@@ -29,10 +30,12 @@ class ApiKeyCreate(Struct):
     name: Annotated[str, Meta(title="Name")]
 
 
-type Md5sum = Annotated[str, Meta(pattern="^[a-f0-9]{32}$", title="md5sum of the file")]
+type ApplianceImageMd5sum = Annotated[
+    str, Meta(pattern="^[a-f0-9]{32}$", title="md5sum of the file")
+]
 
 
-type DownloadUrl = Annotated[
+type ApplianceImageDownloadUrl = Annotated[
     str,
     Meta(
         min_length=1,
@@ -41,7 +44,7 @@ type DownloadUrl = Annotated[
 ]
 
 
-type DownloadUrl1 = Annotated[
+type ApplianceImageDownloadUrl1 = Annotated[
     str,
     Meta(
         max_length=0,
@@ -50,7 +53,7 @@ type DownloadUrl1 = Annotated[
 ]
 
 
-type DirectDownloadUrl = Annotated[
+type ApplianceImageDirectDownloadUrl = Annotated[
     str,
     Meta(
         min_length=1,
@@ -59,7 +62,7 @@ type DirectDownloadUrl = Annotated[
 ]
 
 
-type DirectDownloadUrl1 = Annotated[
+type ApplianceImageDirectDownloadUrl1 = Annotated[
     str,
     Meta(
         max_length=0,
@@ -108,7 +111,7 @@ class ApplianceMetadata(Struct):
     ) = UNSET
 
 
-class RegistryVersion(IntEnum):
+class ApplianceV16RegistryVersion(IntEnum):
     integer_1 = 1
     integer_2 = 2
     integer_3 = 3
@@ -117,13 +120,17 @@ class RegistryVersion(IntEnum):
     integer_6 = 6
 
 
-type VendorUrl = Annotated[str, Meta(min_length=1, title="Website of the vendor")]
+type ApplianceV16VendorUrl = Annotated[
+    str, Meta(min_length=1, title="Website of the vendor")
+]
 
 
-type VendorUrl1 = Annotated[str, Meta(max_length=0, title="Website of the vendor")]
+type ApplianceV16VendorUrl1 = Annotated[
+    str, Meta(max_length=0, title="Website of the vendor")
+]
 
 
-type DocumentationUrl = Annotated[
+type ApplianceV16DocumentationUrl = Annotated[
     str,
     Meta(
         min_length=1,
@@ -132,7 +139,7 @@ type DocumentationUrl = Annotated[
 ]
 
 
-type DocumentationUrl1 = Annotated[
+type ApplianceV16DocumentationUrl1 = Annotated[
     str,
     Meta(
         max_length=0,
@@ -141,20 +148,22 @@ type DocumentationUrl1 = Annotated[
 ]
 
 
-type ProductUrl = Annotated[
+type ApplianceV16ProductUrl = Annotated[
     str, Meta(min_length=1, title="An optional product url on vendor website")
 ]
 
 
-type ProductUrl1 = Annotated[
+type ApplianceV16ProductUrl1 = Annotated[
     str, Meta(max_length=0, title="An optional product url on vendor website")
 ]
 
 
-type MaintainerEmail = Annotated[str, Meta(max_length=0, title="Maintainer email")]
+type ApplianceV16MaintainerEmail = Annotated[
+    str, Meta(max_length=0, title="Maintainer email")
+]
 
 
-type NetmikoDeviceType = Annotated[
+type ApplianceV16NetmikoDeviceType = Annotated[
     str,
     Meta(
         pattern="^[a-z0-9_]+$|^$",
@@ -163,13 +172,13 @@ type NetmikoDeviceType = Annotated[
 ]
 
 
-type VendorLogoUrl = Annotated[
+type ApplianceV8VendorLogoUrl = Annotated[
     str,
     Meta(min_length=1, title="Link to the vendor logo (used by the GNS3 marketplace)"),
 ]
 
 
-type DocumentationUrl2 = Annotated[
+type ApplianceV8DocumentationUrl = Annotated[
     str,
     Meta(
         min_length=1,
@@ -178,12 +187,23 @@ type DocumentationUrl2 = Annotated[
 ]
 
 
-type ProductUrl2 = Annotated[
+type ApplianceV8ProductUrl = Annotated[
     str, Meta(min_length=1, title="An optional product url on vendor website")
 ]
 
 
-type Idlepc = Annotated[str, Meta(pattern="^0x[0-9a-f]{8}", title="Idlepc")]
+type ApplianceV8NetmikoDeviceType = Annotated[
+    str,
+    Meta(
+        pattern="^[a-z0-9_]+$|^$",
+        title="Device type for Netmiko-based automation tools",
+    ),
+]
+
+
+type ApplianceVersionIdlepc = Annotated[
+    str, Meta(pattern="^0x[0-9a-f]{8}", title="Idlepc")
+]
 
 
 class ApplianceVersionImages(Struct):
@@ -204,6 +224,11 @@ class ApplianceVersionImages(Struct):
         UNSET
     )
     cdrom_image: Annotated[str, Meta(title="cdrom image")] | None | UnsetType = UNSET
+
+
+type ApplianceVersionV8Idlepc = Annotated[
+    str, Meta(pattern="^0x[0-9a-f]{8}", title="Idlepc")
+]
 
 
 class AutoIdlePC(Struct):
@@ -227,15 +252,19 @@ class BodyLoadProjectV3ProjectsLoadPost(Struct):
     path: Annotated[str, Meta(title="Path")]
 
 
-type GrantType = Annotated[str, Meta(pattern="^password$", title="Grant Type")]
+type BodyLoginV3AccessUsersLoginPostGrantType = Annotated[
+    str, Meta(pattern="^password$", title="Grant Type")
+]
 
 
 class BodyLoginV3AccessUsersLoginPost(Struct):
     username: Annotated[str, Meta(title="Username")]
     password: Annotated[str, Meta(title="Password")]
-    grant_type: Annotated[GrantType, Meta(title="Grant Type")] | None | UnsetType = (
-        UNSET
-    )
+    grant_type: (
+        Annotated[BodyLoginV3AccessUsersLoginPostGrantType, Meta(title="Grant Type")]
+        | None
+        | UnsetType
+    ) = UNSET
     scope: Annotated[str, Meta(title="Scope")] | UnsetType = ""
     client_id: Annotated[str, Meta(title="Client Id")] | None | UnsetType = UNSET
     client_secret: Annotated[str, Meta(title="Client Secret")] | None | UnsetType = (
@@ -267,7 +296,7 @@ class Compression(StrEnum):
     field_7z = "7z"
 
 
-type CpuUsagePercent = Annotated[
+type ComputeCpuUsagePercent = Annotated[
     float,
     Meta(
         description="CPU usage of the compute",
@@ -278,7 +307,7 @@ type CpuUsagePercent = Annotated[
 ]
 
 
-type MemoryUsagePercent = Annotated[
+type ComputeMemoryUsagePercent = Annotated[
     float,
     Meta(
         description="Memory usage of the compute",
@@ -289,7 +318,7 @@ type MemoryUsagePercent = Annotated[
 ]
 
 
-type DiskUsagePercent = Annotated[
+type ComputeDiskUsagePercent = Annotated[
     float,
     Meta(
         description="Disk usage of the compute",
@@ -304,7 +333,7 @@ class ComputeDockerImage(Struct):
     image: Annotated[str, Meta(description="Docker image name", title="Image")]
 
 
-type Port = Annotated[int, Meta(gt=0, le=65535, title="Port")]
+type ComputeUpdatePort = Annotated[int, Meta(gt=0, le=65535, title="Port")]
 
 
 class ComputeVMwareVM(Struct):
@@ -407,7 +436,7 @@ class Credentials(Struct):
     password: Annotated[str, Meta(title="Password")]
 
 
-type MacAddress = Annotated[
+type CustomAdapterMacAddress = Annotated[
     str, Meta(pattern="^([0-9a-fA-F]{2}[:]){5}([0-9a-fA-F]{2})$", title="Mac Address")
 ]
 
@@ -416,12 +445,12 @@ class CustomAdapter(Struct):
     adapter_number: Annotated[int, Meta(title="Adapter Number")]
     port_name: Annotated[str, Meta(title="Port Name")] | None | UnsetType = UNSET
     adapter_type: Annotated[str, Meta(title="Adapter Type")] | None | UnsetType = UNSET
-    mac_address: Annotated[MacAddress, Meta(title="Mac Address")] | None | UnsetType = (
-        UNSET
-    )
+    mac_address: (
+        Annotated[CustomAdapterMacAddress, Meta(title="Mac Address")] | None | UnsetType
+    ) = UNSET
 
 
-type MacAddress1 = Annotated[
+type CustomAdapterItemMacAddress = Annotated[
     str,
     Meta(
         pattern="^([0-9a-fA-F]{2}[:]){5}([0-9a-fA-F]{2})$", title="Custom MAC address"
@@ -439,7 +468,7 @@ class DockerConsoleType(StrEnum):
     docker_exec = "docker_exec"
 
 
-type ConsoleResolution = Annotated[
+type DockerPropertiesV8ConsoleResolution = Annotated[
     str,
     Meta(
         pattern="^[0-9]+x[0-9]+$",
@@ -448,7 +477,7 @@ type ConsoleResolution = Annotated[
 ]
 
 
-type Rotation = Annotated[int, Meta(ge=-359, le=360, title="Rotation")]
+type DrawingRotation = Annotated[int, Meta(ge=-359, le=360, title="Rotation")]
 
 
 class Drawing(Struct):
@@ -458,7 +487,9 @@ class Drawing(Struct):
     y: Annotated[int, Meta(title="Y")] | None | UnsetType = UNSET
     z: Annotated[int, Meta(title="Z")] | None | UnsetType = UNSET
     locked: Annotated[bool, Meta(title="Locked")] | None | UnsetType = UNSET
-    rotation: Annotated[Rotation, Meta(title="Rotation")] | None | UnsetType = UNSET
+    rotation: Annotated[DrawingRotation, Meta(title="Rotation")] | None | UnsetType = (
+        UNSET
+    )
     svg: Annotated[str, Meta(title="Svg")] | None | UnsetType = UNSET
 
 
@@ -509,10 +540,15 @@ class DynamipsPlatform(StrEnum):
     c7200 = "c7200"
 
 
-type Ram = Annotated[int, Meta(ge=1, title="Amount of ram")]
+type DynamipsPropertiesV8Ram = Annotated[int, Meta(ge=1, title="Amount of ram")]
 
 
-type Nvram = Annotated[int, Meta(ge=1, title="Amount of nvram")]
+type DynamipsPropertiesV8Nvram = Annotated[int, Meta(ge=1, title="Amount of nvram")]
+
+
+type DynamipsPropertiesV8Idlepc = Annotated[
+    str, Meta(pattern="^0x[0-9a-f]{8}", title="Idlepc")
+]
 
 
 class DynamipsSettings(Struct):
@@ -657,6 +693,9 @@ class ExtraConfig(Struct):
     ) = ""
 
 
+type GNS3VMPort = Annotated[int, Meta(gt=0, le=65535, title="Port")]
+
+
 class IOULicense(Struct):
     iourc_content: Annotated[
         str, Meta(description="Content of iourc file", title="Iourc Content")
@@ -721,7 +760,7 @@ class Kvm(StrEnum):
     disable = "disable"
 
 
-type Rotation1 = Annotated[
+type LabelRotation = Annotated[
     int, Meta(description="Rotation of the label", ge=-359, le=360, title="Rotation")
 ]
 
@@ -757,7 +796,7 @@ class Label(Struct):
     ) = UNSET
     rotation: (
         Annotated[
-            Rotation1, Meta(description="Rotation of the label", title="Rotation")
+            LabelRotation, Meta(description="Rotation of the label", title="Rotation")
         ]
         | None
         | UnsetType
@@ -781,7 +820,7 @@ class LinkNode(Struct):
     label: Label | None | UnsetType = UNSET
 
 
-type ControlOffset = Annotated[
+type LinkStyleControlOffset = Annotated[
     tuple[float, float], Meta(max_length=2, min_length=2, title="Control Offset")
 ]
 
@@ -798,15 +837,19 @@ class LinkStyle(Struct):
         Annotated[int, Meta(title="Flowchart Roundness")] | None | UnsetType
     ) = UNSET
     control_offset: (
-        Annotated[ControlOffset, Meta(title="Control Offset")] | None | UnsetType
+        Annotated[LinkStyleControlOffset, Meta(title="Control Offset")]
+        | None
+        | UnsetType
     ) = UNSET
 
 
-type Nodes = Annotated[list[LinkNode], Meta(max_length=2, min_length=0, title="Nodes")]
+type LinkUpdateNodes = Annotated[
+    list[LinkNode], Meta(max_length=2, min_length=0, title="Nodes")
+]
 
 
 class LinkUpdate(Struct):
-    nodes: Annotated[Nodes, Meta(title="Nodes")] | None | UnsetType = UNSET
+    nodes: Annotated[LinkUpdateNodes, Meta(title="Nodes")] | None | UnsetType = UNSET
     suspend: Annotated[bool, Meta(title="Suspend")] | None | UnsetType = UNSET
     link_style: LinkStyle | None | UnsetType = UNSET
     filters: Annotated[dict[str, Any], Meta(title="Filters")] | None | UnsetType = UNSET
@@ -831,16 +874,20 @@ class LinkUpdate(Struct):
     ) = True
 
 
-type Password = Annotated[str, Meta(max_length=100, min_length=8, title="Password")]
+type LoggedInUserUpdatePassword = Annotated[
+    str, Meta(max_length=100, min_length=8, title="Password")
+]
 
 
 class LoggedInUserUpdate(Struct):
-    password: Annotated[Password, Meta(title="Password")] | None | UnsetType = UNSET
+    password: (
+        Annotated[LoggedInUserUpdatePassword, Meta(title="Password")] | None | UnsetType
+    ) = UNSET
     email: Annotated[str, Meta(title="Email")] | None | UnsetType = UNSET
     full_name: Annotated[str, Meta(title="Full Name")] | None | UnsetType = UNSET
 
 
-type Name = Annotated[
+type MarkerCreateName = Annotated[
     str,
     Meta(
         description="Unique marker name on the link. Auto-generated when absent.",
@@ -851,7 +898,7 @@ type Name = Annotated[
 ]
 
 
-type HighlightDuration = Annotated[
+type MarkerCreateHighlightDuration = Annotated[
     int,
     Meta(
         description="How long (milliseconds) the Web UI keeps this marker highlighted after a match. Omitted = use the UI default. Pure render hint — stored on the link, never sent to uBridge.",
@@ -861,7 +908,7 @@ type HighlightDuration = Annotated[
 ]
 
 
-type Direction = Annotated[
+type MarkerCreateDirection = Annotated[
     str,
     Meta(
         description="Direction filter: 'tx' = capture node sending only, 'rx' = capture node receiving only, 'both' or null = both directions.",
@@ -875,7 +922,7 @@ class MarkerCreate(Struct):
     bpf: Annotated[str, Meta(title="Bpf")]
     name: (
         Annotated[
-            Name,
+            MarkerCreateName,
             Meta(
                 description="Unique marker name on the link. Auto-generated when absent.",
                 title="Name",
@@ -899,7 +946,7 @@ class MarkerCreate(Struct):
     ) = UNSET
     highlight_duration: (
         Annotated[
-            HighlightDuration,
+            MarkerCreateHighlightDuration,
             Meta(
                 description="How long (milliseconds) the Web UI keeps this marker highlighted after a match. Omitted = use the UI default. Pure render hint — stored on the link, never sent to uBridge.",
                 title="Highlight Duration",
@@ -921,7 +968,7 @@ class MarkerCreate(Struct):
     ) = UNSET
     direction: (
         Annotated[
-            Direction,
+            MarkerCreateDirection,
             Meta(
                 description="Direction filter: 'tx' = capture node sending only, 'rx' = capture node receiving only, 'both' or null = both directions.",
                 title="Direction",
@@ -953,7 +1000,7 @@ class MarkerCreate(Struct):
     ) = "DLT_EN10MB"
 
 
-type Name1 = Annotated[
+type MarkerDefinitionCreateName = Annotated[
     str,
     Meta(
         description="Unique definition name. Auto-generated when absent.",
@@ -964,7 +1011,7 @@ type Name1 = Annotated[
 ]
 
 
-type HighlightDuration1 = Annotated[
+type MarkerDefinitionCreateHighlightDuration = Annotated[
     int,
     Meta(
         description="How long (milliseconds) the Web UI keeps this marker highlighted after a match. Omitted = use the UI default. Pure render hint — stored with the definition, never sent to uBridge.",
@@ -974,11 +1021,21 @@ type HighlightDuration1 = Annotated[
 ]
 
 
+type MarkerDefinitionCreateDirection = Annotated[
+    str,
+    Meta(
+        description="Direction filter: 'tx' = capture node sending only, 'rx' = capture node receiving only, 'both' or null = both directions.",
+        pattern="^(tx|rx|both)$",
+        title="Direction",
+    ),
+]
+
+
 class MarkerDefinitionCreate(Struct):
     bpf: Annotated[str, Meta(title="Bpf")]
     name: (
         Annotated[
-            Name1,
+            MarkerDefinitionCreateName,
             Meta(
                 description="Unique definition name. Auto-generated when absent.",
                 title="Name",
@@ -1001,7 +1058,7 @@ class MarkerDefinitionCreate(Struct):
     ) = UNSET
     highlight_duration: (
         Annotated[
-            HighlightDuration1,
+            MarkerDefinitionCreateHighlightDuration,
             Meta(
                 description="How long (milliseconds) the Web UI keeps this marker highlighted after a match. Omitted = use the UI default. Pure render hint — stored with the definition, never sent to uBridge.",
                 title="Highlight Duration",
@@ -1012,7 +1069,7 @@ class MarkerDefinitionCreate(Struct):
     ) = UNSET
     direction: (
         Annotated[
-            Direction,
+            MarkerDefinitionCreateDirection,
             Meta(
                 description="Direction filter: 'tx' = capture node sending only, 'rx' = capture node receiving only, 'both' or null = both directions.",
                 title="Direction",
@@ -1033,7 +1090,7 @@ class MarkerDefinitionCreate(Struct):
     ) = "DLT_EN10MB"
 
 
-type Direction2 = Annotated[
+type MarkerUpdateDirection = Annotated[
     str,
     Meta(
         description="Direction filter; 'both' or an explicit null clears it to both. Omit to keep.",
@@ -1043,7 +1100,7 @@ type Direction2 = Annotated[
 ]
 
 
-type HighlightDuration2 = Annotated[
+type MarkerUpdateHighlightDuration = Annotated[
     int,
     Meta(
         description="UI highlight duration in ms; null = UI default",
@@ -1058,7 +1115,7 @@ class MarkerUpdate(Struct):
     tag: Annotated[int, Meta(title="Tag")] | None | UnsetType = UNSET
     direction: (
         Annotated[
-            Direction2,
+            MarkerUpdateDirection,
             Meta(
                 description="Direction filter; 'both' or an explicit null clears it to both. Omit to keep.",
                 title="Direction",
@@ -1077,7 +1134,7 @@ class MarkerUpdate(Struct):
     ) = UNSET
     highlight_duration: (
         Annotated[
-            HighlightDuration2,
+            MarkerUpdateHighlightDuration,
             Meta(
                 description="UI highlight duration in ms; null = UI default",
                 title="Highlight Duration",
@@ -1116,7 +1173,7 @@ class MissingImage(Struct):
     ) = UNSET
 
 
-class NetmikoDeviceType2(Struct):
+class NetmikoDeviceType(Struct):
     name: Annotated[
         str,
         Meta(
@@ -1155,19 +1212,19 @@ class NetmikoDeviceTypeList(Struct):
         ),
     ]
     device_types: Annotated[
-        list[NetmikoDeviceType2],
+        list[NetmikoDeviceType],
         Meta(
             description="Supported device types, sorted by name", title="Device Types"
         ),
     ]
 
 
-type Console = Annotated[
+type NodeConsole = Annotated[
     int, Meta(description="Console TCP port", gt=0, le=65535, title="Console")
 ]
 
 
-type NetmikoDeviceType3 = Annotated[
+type NodeNetmikoDeviceType = Annotated[
     str,
     Meta(
         description="Device type for Netmiko-based automation tools, overrides the template value",
@@ -1177,7 +1234,27 @@ type NetmikoDeviceType3 = Annotated[
 ]
 
 
-type Aux = Annotated[
+type NodeAux = Annotated[
+    int, Meta(description="Auxiliary console TCP port", gt=0, le=65535, title="Aux")
+]
+
+
+type NodeCreateConsole = Annotated[
+    int, Meta(description="Console TCP port", gt=0, le=65535, title="Console")
+]
+
+
+type NodeCreateNetmikoDeviceType = Annotated[
+    str,
+    Meta(
+        description="Device type for Netmiko-based automation tools, overrides the template value",
+        pattern="^[a-z0-9_]+$|^$",
+        title="Netmiko Device Type",
+    ),
+]
+
+
+type NodeCreateAux = Annotated[
     int, Meta(description="Auxiliary console TCP port", gt=0, le=65535, title="Aux")
 ]
 
@@ -1203,7 +1280,7 @@ class NodeFile(Struct):
     ]
 
 
-type MacAddress2 = Annotated[
+type NodePortMacAddress = Annotated[
     str, Meta(pattern="^([0-9a-fA-F]{2}[:]){5}([0-9a-fA-F]{2})$", title="Mac Address")
 ]
 
@@ -1230,6 +1307,26 @@ class NodeType(StrEnum):
     qemu = "qemu"
 
 
+type NodeUpdateConsole = Annotated[
+    int, Meta(description="Console TCP port", gt=0, le=65535, title="Console")
+]
+
+
+type NodeUpdateNetmikoDeviceType = Annotated[
+    str,
+    Meta(
+        description="Device type for Netmiko-based automation tools, overrides the template value",
+        pattern="^[a-z0-9_]+$|^$",
+        title="Netmiko Device Type",
+    ),
+]
+
+
+type NodeUpdateAux = Annotated[
+    int, Meta(description="Auxiliary console TCP port", gt=0, le=65535, title="Aux")
+]
+
+
 class NodeUpdate(Struct):
     compute_id: Annotated[UUID | str, Meta(title="Compute Id")] | None | UnsetType = (
         UNSET
@@ -1238,7 +1335,9 @@ class NodeUpdate(Struct):
     node_type: NodeType | None | UnsetType = UNSET
     node_id: Annotated[UUID, Meta(title="Node Id")] | None | UnsetType = UNSET
     console: (
-        Annotated[Console, Meta(description="Console TCP port", title="Console")]
+        Annotated[
+            NodeUpdateConsole, Meta(description="Console TCP port", title="Console")
+        ]
         | None
         | UnsetType
     ) = UNSET
@@ -1256,7 +1355,7 @@ class NodeUpdate(Struct):
     ) = False
     netmiko_device_type: (
         Annotated[
-            NetmikoDeviceType3,
+            NodeUpdateNetmikoDeviceType,
             Meta(
                 description="Device type for Netmiko-based automation tools, overrides the template value",
                 title="Netmiko Device Type",
@@ -1288,7 +1387,9 @@ class NodeUpdate(Struct):
         | UnsetType
     ) = UNSET
     aux: (
-        Annotated[Aux, Meta(description="Auxiliary console TCP port", title="Aux")]
+        Annotated[
+            NodeUpdateAux, Meta(description="Auxiliary console TCP port", title="Aux")
+        ]
         | None
         | UnsetType
     ) = UNSET
@@ -1358,8 +1459,8 @@ class Privilege(Struct):
     name: Annotated[str, Meta(title="Name")]
     privilege_id: Annotated[UUID, Meta(title="Privilege Id")]
     description: Annotated[str, Meta(title="Description")] | None | UnsetType = UNSET
-    created_at: Annotated[str, Meta(title="Created At")] | None | UnsetType = UNSET
-    updated_at: Annotated[str, Meta(title="Updated At")] | None | UnsetType = UNSET
+    created_at: Annotated[datetime, Meta(title="Created At")] | None | UnsetType = UNSET
+    updated_at: Annotated[datetime, Meta(title="Updated At")] | None | UnsetType = UNSET
 
 
 class ProjectCompression(StrEnum):
@@ -1380,7 +1481,9 @@ class Protocol(StrEnum):
     https = "https"
 
 
-type CpuThrottling = Annotated[float, Meta(ge=0.0, le=100.0, title="Throttle the CPU")]
+type QemuCpuThrottling = Annotated[
+    float, Meta(ge=0.0, le=100.0, title="Throttle the CPU")
+]
 
 
 class QemuAdapterType(StrEnum):
@@ -1556,7 +1659,9 @@ class QemuProcessPriority(StrEnum):
     very_low = "very low"
 
 
-type CpuThrottling1 = Annotated[int, Meta(ge=0, le=800, title="Throttle the CPU")]
+type QemuPropertiesV8CpuThrottling = Annotated[
+    int, Meta(ge=0, le=800, title="Throttle the CPU")
+]
 
 
 class QemuSettings(Struct):
@@ -1645,16 +1750,16 @@ class RefreshTokenRequest(Struct):
 class ResourcePool(Struct):
     name: Annotated[str, Meta(title="Name")]
     resource_pool_id: Annotated[UUID, Meta(title="Resource Pool Id")]
-    created_at: Annotated[str, Meta(title="Created At")] | None | UnsetType = UNSET
-    updated_at: Annotated[str, Meta(title="Updated At")] | None | UnsetType = UNSET
+    created_at: Annotated[datetime, Meta(title="Created At")] | None | UnsetType = UNSET
+    updated_at: Annotated[datetime, Meta(title="Updated At")] | None | UnsetType = UNSET
 
 
-class ResourcePoolCreate(ApiKeyCreate):
-    pass
+class ResourcePoolCreate(Struct):
+    name: Annotated[str, Meta(title="Name")]
 
 
-class ResourcePoolUpdate(ApiKeyCreate):
-    pass
+class ResourcePoolUpdate(Struct):
+    name: Annotated[str, Meta(title="Name")]
 
 
 class ResourceType(StrEnum):
@@ -1667,8 +1772,8 @@ class Role(Struct):
     privileges: Annotated[list[Privilege], Meta(title="Privileges")]
     name: Annotated[str, Meta(title="Name")] | None | UnsetType = UNSET
     description: Annotated[str, Meta(title="Description")] | None | UnsetType = UNSET
-    created_at: Annotated[str, Meta(title="Created At")] | None | UnsetType = UNSET
-    updated_at: Annotated[str, Meta(title="Updated At")] | None | UnsetType = UNSET
+    created_at: Annotated[datetime, Meta(title="Created At")] | None | UnsetType = UNSET
+    updated_at: Annotated[datetime, Meta(title="Updated At")] | None | UnsetType = UNSET
 
 
 class RoleCreate(Struct):
@@ -1681,35 +1786,47 @@ class RoleUpdate(Struct):
     description: Annotated[str, Meta(title="Description")] | None | UnsetType = UNSET
 
 
-type ConsoleStartPortRange = Annotated[
+class ServerProtocol(StrEnum):
+    http = "http"
+    https = "https"
+
+
+type ServerSettingsUpdatePort = Annotated[int, Meta(gt=0, le=65535, title="Port")]
+
+
+type ServerSettingsUpdateConsoleStartPortRange = Annotated[
     int, Meta(gt=0, le=65535, title="Console Start Port Range")
 ]
 
 
-type ConsoleEndPortRange = Annotated[
+type ServerSettingsUpdateConsoleEndPortRange = Annotated[
     int, Meta(gt=0, le=65535, title="Console End Port Range")
 ]
 
 
-type VncConsoleStartPortRange = Annotated[
+type ServerSettingsUpdateVncConsoleStartPortRange = Annotated[
     int, Meta(ge=5900, le=65535, title="Vnc Console Start Port Range")
 ]
 
 
-type VncConsoleEndPortRange = Annotated[
+type ServerSettingsUpdateVncConsoleEndPortRange = Annotated[
     int, Meta(ge=5900, le=65535, title="Vnc Console End Port Range")
 ]
 
 
-type UdpStartPortRange = Annotated[
+type ServerSettingsUpdateUdpStartPortRange = Annotated[
     int, Meta(gt=0, le=65535, title="Udp Start Port Range")
 ]
 
 
-type UdpEndPortRange = Annotated[int, Meta(gt=0, le=65535, title="Udp End Port Range")]
+type ServerSettingsUpdateUdpEndPortRange = Annotated[
+    int, Meta(gt=0, le=65535, title="Udp End Port Range")
+]
 
 
-type MarkerListenPort = Annotated[int, Meta(ge=0, le=65535, title="Marker Listen Port")]
+type ServerSettingsUpdateMarkerListenPort = Annotated[
+    int, Meta(ge=0, le=65535, title="Marker Listen Port")
+]
 
 
 class Snapshot(Struct):
@@ -1745,7 +1862,7 @@ class Status(StrEnum):
     broken = "broken"
 
 
-type Url = Annotated[
+type SupplierUrl = Annotated[
     str,
     Meta(
         description="URL to the project supplier site",
@@ -1762,14 +1879,25 @@ class Supplier(Struct):
     ]
     url: (
         Annotated[
-            Url, Meta(description="URL to the project supplier site", title="Url")
+            SupplierUrl,
+            Meta(description="URL to the project supplier site", title="Url"),
         ]
         | None
         | UnsetType
     ) = UNSET
 
 
-type NetmikoDeviceType6 = Annotated[
+type TemplateNetmikoDeviceType = Annotated[
+    str,
+    Meta(
+        description="Device type for Netmiko-based automation tools (e.g. 'cisco_xr' or 'nokia_srl')",
+        pattern="^[a-z0-9_]+$|^$",
+        title="Netmiko Device Type",
+    ),
+]
+
+
+type TemplateCreateNetmikoDeviceType = Annotated[
     str,
     Meta(
         description="Device type for Netmiko-based automation tools (e.g. 'cisco_xr' or 'nokia_srl')",
@@ -1784,6 +1912,16 @@ class TemplateType(StrEnum):
     iou = "iou"
     dynamips = "dynamips"
     qemu = "qemu"
+
+
+type TemplateUpdateNetmikoDeviceType = Annotated[
+    str,
+    Meta(
+        description="Device type for Netmiko-based automation tools (e.g. 'cisco_xr' or 'nokia_srl')",
+        pattern="^[a-z0-9_]+$|^$",
+        title="Netmiko Device Type",
+    ),
+]
 
 
 class TemplateUsage(Struct):
@@ -1830,20 +1968,20 @@ class UbridgeControlTransport(StrEnum):
     unix = "unix"
 
 
-type Username = Annotated[
+type UserUsername = Annotated[
     str, Meta(min_length=3, pattern="[a-zA-Z0-9_-]+$", title="Username")
 ]
 
 
 class User(Struct):
     user_id: Annotated[UUID, Meta(title="User Id")]
-    username: Annotated[Username, Meta(title="Username")] | None | UnsetType = UNSET
+    username: Annotated[UserUsername, Meta(title="Username")] | None | UnsetType = UNSET
     is_active: Annotated[bool, Meta(title="Is Active")] | UnsetType = True
     email: Annotated[str, Meta(title="Email")] | None | UnsetType = UNSET
     full_name: Annotated[str, Meta(title="Full Name")] | None | UnsetType = UNSET
-    created_at: Annotated[str, Meta(title="Created At")] | None | UnsetType = UNSET
-    updated_at: Annotated[str, Meta(title="Updated At")] | None | UnsetType = UNSET
-    last_login: Annotated[str, Meta(title="Last Login")] | None | UnsetType = UNSET
+    created_at: Annotated[datetime, Meta(title="Created At")] | None | UnsetType = UNSET
+    updated_at: Annotated[datetime, Meta(title="Updated At")] | None | UnsetType = UNSET
+    last_login: Annotated[datetime, Meta(title="Last Login")] | None | UnsetType = UNSET
     is_superadmin: Annotated[bool, Meta(title="Is Superadmin")] | UnsetType = False
 
 
@@ -1857,31 +1995,57 @@ class UserCreate(Struct):
     full_name: Annotated[str, Meta(title="Full Name")] | None | UnsetType = UNSET
 
 
-type Name2 = Annotated[str, Meta(min_length=3, pattern="[a-zA-Z0-9_-]+$", title="Name")]
+type UserGroupName = Annotated[
+    str, Meta(min_length=3, pattern="[a-zA-Z0-9_-]+$", title="Name")
+]
 
 
 class UserGroup(Struct):
     user_group_id: Annotated[UUID, Meta(title="User Group Id")]
     is_builtin: Annotated[bool, Meta(title="Is Builtin")]
-    name: Annotated[Name2, Meta(title="Name")] | None | UnsetType = UNSET
-    created_at: Annotated[str, Meta(title="Created At")] | None | UnsetType = UNSET
-    updated_at: Annotated[str, Meta(title="Updated At")] | None | UnsetType = UNSET
+    name: Annotated[UserGroupName, Meta(title="Name")] | None | UnsetType = UNSET
+    created_at: Annotated[datetime, Meta(title="Created At")] | None | UnsetType = UNSET
+    updated_at: Annotated[datetime, Meta(title="Updated At")] | None | UnsetType = UNSET
+
+
+type UserGroupCreateName = Annotated[
+    str, Meta(min_length=3, pattern="[a-zA-Z0-9_-]+$", title="Name")
+]
 
 
 class UserGroupCreate(Struct):
-    name: Annotated[Name2, Meta(title="Name")] | None
+    name: Annotated[UserGroupCreateName, Meta(title="Name")] | None
+
+
+type UserGroupUpdateName = Annotated[
+    str, Meta(min_length=3, pattern="[a-zA-Z0-9_-]+$", title="Name")
+]
 
 
 class UserGroupUpdate(Struct):
-    name: Annotated[Name2, Meta(title="Name")] | None | UnsetType = UNSET
+    name: Annotated[UserGroupUpdateName, Meta(title="Name")] | None | UnsetType = UNSET
+
+
+type UserUpdateUsername = Annotated[
+    str, Meta(min_length=3, pattern="[a-zA-Z0-9_-]+$", title="Username")
+]
+
+
+type UserUpdatePassword = Annotated[
+    str, Meta(max_length=100, min_length=8, title="Password")
+]
 
 
 class UserUpdate(Struct):
-    username: Annotated[Username, Meta(title="Username")] | None | UnsetType = UNSET
+    username: (
+        Annotated[UserUpdateUsername, Meta(title="Username")] | None | UnsetType
+    ) = UNSET
     is_active: Annotated[bool, Meta(title="Is Active")] | UnsetType = True
     email: Annotated[str, Meta(title="Email")] | None | UnsetType = UNSET
     full_name: Annotated[str, Meta(title="Full Name")] | None | UnsetType = UNSET
-    password: Annotated[Password, Meta(title="Password")] | None | UnsetType = UNSET
+    password: (
+        Annotated[UserUpdatePassword, Meta(title="Password")] | None | UnsetType
+    ) = UNSET
 
 
 class VPCSSettings(Struct):
@@ -2026,6 +2190,11 @@ class Gns3serverSchemasControllerLinksLinkType(StrEnum):
     serial = "serial"
 
 
+class Gns3serverSchemasControllerNodesLinkType(StrEnum):
+    ethernet = "ethernet"
+    serial = "serial"
+
+
 class Gns3serverSchemasControllerTemplatesCategory(StrEnum):
     router = "router"
     switch = "switch"
@@ -2042,24 +2211,32 @@ class ACE(Struct):
     allowed: Annotated[bool, Meta(title="Allowed")] | None | UnsetType = True
     user_id: Annotated[UUID, Meta(title="User Id")] | None | UnsetType = UNSET
     group_id: Annotated[UUID, Meta(title="Group Id")] | None | UnsetType = UNSET
-    created_at: Annotated[str, Meta(title="Created At")] | None | UnsetType = UNSET
-    updated_at: Annotated[str, Meta(title="Updated At")] | None | UnsetType = UNSET
+    created_at: Annotated[datetime, Meta(title="Created At")] | None | UnsetType = UNSET
+    updated_at: Annotated[datetime, Meta(title="Updated At")] | None | UnsetType = UNSET
 
 
-class ACECreate(ACEUpdate):
-    pass
+class ACECreate(Struct):
+    ace_type: Annotated[ACEType, Meta(description="Type of the ACE")]
+    path: Annotated[str, Meta(title="Path")]
+    role_id: Annotated[UUID, Meta(title="Role Id")]
+    propagate: Annotated[bool, Meta(title="Propagate")] | None | UnsetType = True
+    allowed: Annotated[bool, Meta(title="Allowed")] | None | UnsetType = True
+    user_id: Annotated[UUID, Meta(title="User Id")] | None | UnsetType = UNSET
+    group_id: Annotated[UUID, Meta(title="Group Id")] | None | UnsetType = UNSET
 
 
 class ApplianceImage(Struct):
     filename: Annotated[str, Meta(title="Filename")]
     version: Annotated[str, Meta(title="Version of the file")]
     filesize: Annotated[int, Meta(title="File size in bytes")]
-    md5sum: Annotated[Md5sum, Meta(title="md5sum of the file")] | None | UnsetType = (
-        UNSET
-    )
+    md5sum: (
+        Annotated[ApplianceImageMd5sum, Meta(title="md5sum of the file")]
+        | None
+        | UnsetType
+    ) = UNSET
     download_url: (
         Annotated[
-            DownloadUrl | DownloadUrl1,
+            ApplianceImageDownloadUrl | ApplianceImageDownloadUrl1,
             Meta(
                 title="Download url where you can download the appliance from a browser"
             ),
@@ -2069,7 +2246,7 @@ class ApplianceImage(Struct):
     ) = UNSET
     direct_download_url: (
         Annotated[
-            DirectDownloadUrl | DirectDownloadUrl1,
+            ApplianceImageDirectDownloadUrl | ApplianceImageDirectDownloadUrl1,
             Meta(
                 title="Optional. Non authenticated url to the image file where you can download the image."
             ),
@@ -2107,7 +2284,9 @@ class ApplianceImage(Struct):
 
 class ApplianceVersion(Struct):
     name: Annotated[str, Meta(title="Name of the version")]
-    idlepc: Annotated[Idlepc, Meta(title="Idlepc")] | None | UnsetType = UNSET
+    idlepc: (
+        Annotated[ApplianceVersionIdlepc, Meta(title="Idlepc")] | None | UnsetType
+    ) = UNSET
     images: (
         Annotated[ApplianceVersionImages, Meta(title="Images used for this version")]
         | None
@@ -2122,7 +2301,9 @@ class ApplianceVersionV8(Struct):
         | None
         | UnsetType
     ) = UNSET
-    idlepc: Annotated[Idlepc, Meta(title="Idlepc")] | None | UnsetType = UNSET
+    idlepc: (
+        Annotated[ApplianceVersionV8Idlepc, Meta(title="Idlepc")] | None | UnsetType
+    ) = UNSET
     category: (
         Annotated[
             Gns3serverSchemasControllerAppliancesCategory,
@@ -2195,8 +2376,8 @@ class Compute(Struct):
     compute_id: Annotated[str | UUID, Meta(title="Compute Id")]
     user: Annotated[str, Meta(title="User")] | UnsetType = UNSET
     password: Annotated[str, Meta(title="Password")] | None | UnsetType = UNSET
-    created_at: Annotated[str, Meta(title="Created At")] | None | UnsetType = UNSET
-    updated_at: Annotated[str, Meta(title="Updated At")] | None | UnsetType = UNSET
+    created_at: Annotated[datetime, Meta(title="Created At")] | None | UnsetType = UNSET
+    updated_at: Annotated[datetime, Meta(title="Updated At")] | None | UnsetType = UNSET
     connected: (
         Annotated[
             bool,
@@ -2210,7 +2391,7 @@ class Compute(Struct):
     ) = UNSET
     cpu_usage_percent: (
         Annotated[
-            CpuUsagePercent,
+            ComputeCpuUsagePercent,
             Meta(description="CPU usage of the compute", title="Cpu Usage Percent"),
         ]
         | None
@@ -2218,7 +2399,7 @@ class Compute(Struct):
     ) = UNSET
     memory_usage_percent: (
         Annotated[
-            MemoryUsagePercent,
+            ComputeMemoryUsagePercent,
             Meta(
                 description="Memory usage of the compute", title="Memory Usage Percent"
             ),
@@ -2228,7 +2409,7 @@ class Compute(Struct):
     ) = UNSET
     disk_usage_percent: (
         Annotated[
-            DiskUsagePercent,
+            ComputeDiskUsagePercent,
             Meta(description="Disk usage of the compute", title="Disk Usage Percent"),
         ]
         | None
@@ -2257,7 +2438,7 @@ class ComputeCreate(Struct):
 class ComputeUpdate(Struct):
     protocol: Protocol | None | UnsetType = UNSET
     host: Annotated[str, Meta(title="Host")] | None | UnsetType = UNSET
-    port: Annotated[Port, Meta(title="Port")] | None | UnsetType = UNSET
+    port: Annotated[ComputeUpdatePort, Meta(title="Port")] | None | UnsetType = UNSET
     user: Annotated[str, Meta(title="User")] | None | UnsetType = UNSET
     password: Annotated[str, Meta(title="Password")] | None | UnsetType = UNSET
     name: Annotated[str, Meta(title="Name")] | None | UnsetType = UNSET
@@ -2270,7 +2451,9 @@ class CustomAdapterItem(Struct):
         Annotated[QemuAdapterType, Meta(title="Custom adapter type")] | None | UnsetType
     ) = UNSET
     mac_address: (
-        Annotated[MacAddress1, Meta(title="Custom MAC address")] | None | UnsetType
+        Annotated[CustomAdapterItemMacAddress, Meta(title="Custom MAC address")]
+        | None
+        | UnsetType
     ) = UNSET
 
 
@@ -2403,7 +2586,7 @@ class DockerPropertiesV8(Struct):
     ) = UNSET
     console_resolution: (
         Annotated[
-            ConsoleResolution,
+            DockerPropertiesV8ConsoleResolution,
             Meta(title="Console resolution for VNC, for example 1024x768"),
         ]
         | None
@@ -2485,9 +2668,19 @@ class DynamipsPropertiesV8(Struct):
     platform: (
         Annotated[DynamipsPlatform, Meta(title="Platform type")] | None | UnsetType
     ) = UNSET
-    ram: Annotated[Ram, Meta(title="Amount of ram")] | None | UnsetType = UNSET
-    nvram: Annotated[Nvram, Meta(title="Amount of nvram")] | None | UnsetType = UNSET
-    idlepc: Annotated[Idlepc, Meta(title="Idlepc")] | None | UnsetType = UNSET
+    ram: (
+        Annotated[DynamipsPropertiesV8Ram, Meta(title="Amount of ram")]
+        | None
+        | UnsetType
+    ) = UNSET
+    nvram: (
+        Annotated[DynamipsPropertiesV8Nvram, Meta(title="Amount of nvram")]
+        | None
+        | UnsetType
+    ) = UNSET
+    idlepc: (
+        Annotated[DynamipsPropertiesV8Idlepc, Meta(title="Idlepc")] | None | UnsetType
+    ) = UNSET
     startup_config: (
         Annotated[str, Meta(title="Config loaded at startup")] | None | UnsetType
     ) = UNSET
@@ -2564,7 +2757,7 @@ class GNS3VM(Struct):
         | None
         | UnsetType
     ) = UNSET
-    port: Annotated[Port, Meta(title="Port")] | None | UnsetType = UNSET
+    port: Annotated[GNS3VMPort, Meta(title="Port")] | None | UnsetType = UNSET
 
 
 class HTTPValidationError(Struct):
@@ -2582,8 +2775,8 @@ class Image(Struct):
     checksum_algorithm: Annotated[
         str, Meta(description="Checksum algorithm", title="Checksum Algorithm")
     ]
-    created_at: Annotated[str, Meta(title="Created At")] | None | UnsetType = UNSET
-    updated_at: Annotated[str, Meta(title="Updated At")] | None | UnsetType = UNSET
+    created_at: Annotated[datetime, Meta(title="Created At")] | None | UnsetType = UNSET
+    updated_at: Annotated[datetime, Meta(title="Updated At")] | None | UnsetType = UNSET
 
 
 class IouPropertiesV8(Struct):
@@ -2618,9 +2811,14 @@ class IouPropertiesV8(Struct):
     ) = UNSET
 
 
+type LinkNodes = Annotated[
+    list[LinkNode], Meta(max_length=2, min_length=0, title="Nodes")
+]
+
+
 class Link(Struct):
     link_id: Annotated[UUID, Meta(title="Link Id")]
-    nodes: Annotated[Nodes, Meta(title="Nodes")] | None | UnsetType = UNSET
+    nodes: Annotated[LinkNodes, Meta(title="Nodes")] | None | UnsetType = UNSET
     suspend: Annotated[bool, Meta(title="Suspend")] | None | UnsetType = UNSET
     link_style: LinkStyle | None | UnsetType = UNSET
     filters: Annotated[dict[str, Any], Meta(title="Filters")] | None | UnsetType = UNSET
@@ -2735,7 +2933,9 @@ class NodeCreate(Struct):
     node_type: NodeType
     node_id: Annotated[UUID, Meta(title="Node Id")] | UnsetType = UNSET
     console: (
-        Annotated[Console, Meta(description="Console TCP port", title="Console")]
+        Annotated[
+            NodeCreateConsole, Meta(description="Console TCP port", title="Console")
+        ]
         | None
         | UnsetType
     ) = UNSET
@@ -2753,7 +2953,7 @@ class NodeCreate(Struct):
     ) = False
     netmiko_device_type: (
         Annotated[
-            NetmikoDeviceType3,
+            NodeCreateNetmikoDeviceType,
             Meta(
                 description="Device type for Netmiko-based automation tools, overrides the template value",
                 title="Netmiko Device Type",
@@ -2785,7 +2985,9 @@ class NodeCreate(Struct):
         | UnsetType
     ) = UNSET
     aux: (
-        Annotated[Aux, Meta(description="Auxiliary console TCP port", title="Aux")]
+        Annotated[
+            NodeCreateAux, Meta(description="Auxiliary console TCP port", title="Aux")
+        ]
         | None
         | UnsetType
     ) = UNSET
@@ -2859,7 +3061,7 @@ class NodePort(Struct):
     ]
     port_number: Annotated[int, Meta(description="Port slot", title="Port Number")]
     link_type: Annotated[
-        Gns3serverSchemasControllerLinksLinkType, Meta(description="Type of link")
+        Gns3serverSchemasControllerNodesLinkType, Meta(description="Type of link")
     ]
     data_link_types: Annotated[
         dict[str, Any],
@@ -2871,7 +3073,7 @@ class NodePort(Struct):
         | UnsetType
     ) = UNSET
     mac_address: (
-        Annotated[MacAddress2, Meta(title="Mac Address")] | None | UnsetType
+        Annotated[NodePortMacAddress, Meta(title="Mac Address")] | None | UnsetType
     ) = UNSET
 
 
@@ -3458,7 +3660,7 @@ class Qemu(Struct):
         | UnsetType
     ) = UNSET
     cpu_throttling: (
-        Annotated[CpuThrottling, Meta(title="Throttle the CPU")] | None | UnsetType
+        Annotated[QemuCpuThrottling, Meta(title="Throttle the CPU")] | None | UnsetType
     ) = UNSET
     on_close: (
         Annotated[QemuOnClose, Meta(title="Action to execute on the VM is closed")]
@@ -3624,7 +3826,9 @@ class QemuPropertiesV8(Struct):
         | UnsetType
     ) = UNSET
     cpu_throttling: (
-        Annotated[CpuThrottling1, Meta(title="Throttle the CPU")] | None | UnsetType
+        Annotated[QemuPropertiesV8CpuThrottling, Meta(title="Throttle the CPU")]
+        | None
+        | UnsetType
     ) = UNSET
     tpm: (
         Annotated[bool, Meta(title="Enable the Trusted Platform Module (TPM)")]
@@ -3650,8 +3854,8 @@ class Resource(Struct):
     resource_id: Annotated[UUID, Meta(title="Resource Id")]
     resource_type: Annotated[ResourceType, Meta(description="Type of the resource")]
     name: Annotated[str, Meta(title="Name")] | None | UnsetType = UNSET
-    created_at: Annotated[str, Meta(title="Created At")] | None | UnsetType = UNSET
-    updated_at: Annotated[str, Meta(title="Updated At")] | None | UnsetType = UNSET
+    created_at: Annotated[datetime, Meta(title="Created At")] | None | UnsetType = UNSET
+    updated_at: Annotated[datetime, Meta(title="Updated At")] | None | UnsetType = UNSET
 
 
 class ServerSettingsResponse(Struct):
@@ -3687,7 +3891,8 @@ class ServerSettingsResponse(Struct):
     ) = "runnervmtr4k5 (controller)"
     protocol: (
         Annotated[
-            Protocol, Meta(description="Protocol used by the server: http or https")
+            ServerProtocol,
+            Meta(description="Protocol used by the server: http or https"),
         ]
         | UnsetType
     ) = "http"
@@ -4106,9 +4311,11 @@ class ServerSettingsUpdate(Struct):
         Annotated[bool, Meta(title="Enable Http Auth")] | None | UnsetType
     ) = UNSET
     name: Annotated[str, Meta(title="Name")] | None | UnsetType = UNSET
-    protocol: Protocol | None | UnsetType = UNSET
+    protocol: ServerProtocol | None | UnsetType = UNSET
     host: Annotated[str, Meta(title="Host")] | None | UnsetType = UNSET
-    port: Annotated[Port, Meta(title="Port")] | None | UnsetType = UNSET
+    port: Annotated[ServerSettingsUpdatePort, Meta(title="Port")] | None | UnsetType = (
+        UNSET
+    )
     secrets_dir: Annotated[str, Meta(title="Secrets Dir")] | None | UnsetType = UNSET
     certfile: Annotated[str, Meta(title="Certfile")] | None | UnsetType = UNSET
     certkey: Annotated[str, Meta(title="Certkey")] | None | UnsetType = UNSET
@@ -4139,32 +4346,48 @@ class ServerSettingsUpdate(Struct):
         Annotated[list[str], Meta(title="Additional Images Paths")] | None | UnsetType
     ) = UNSET
     console_start_port_range: (
-        Annotated[ConsoleStartPortRange, Meta(title="Console Start Port Range")]
+        Annotated[
+            ServerSettingsUpdateConsoleStartPortRange,
+            Meta(title="Console Start Port Range"),
+        ]
         | None
         | UnsetType
     ) = UNSET
     console_end_port_range: (
-        Annotated[ConsoleEndPortRange, Meta(title="Console End Port Range")]
+        Annotated[
+            ServerSettingsUpdateConsoleEndPortRange,
+            Meta(title="Console End Port Range"),
+        ]
         | None
         | UnsetType
     ) = UNSET
     vnc_console_start_port_range: (
-        Annotated[VncConsoleStartPortRange, Meta(title="Vnc Console Start Port Range")]
+        Annotated[
+            ServerSettingsUpdateVncConsoleStartPortRange,
+            Meta(title="Vnc Console Start Port Range"),
+        ]
         | None
         | UnsetType
     ) = UNSET
     vnc_console_end_port_range: (
-        Annotated[VncConsoleEndPortRange, Meta(title="Vnc Console End Port Range")]
+        Annotated[
+            ServerSettingsUpdateVncConsoleEndPortRange,
+            Meta(title="Vnc Console End Port Range"),
+        ]
         | None
         | UnsetType
     ) = UNSET
     udp_start_port_range: (
-        Annotated[UdpStartPortRange, Meta(title="Udp Start Port Range")]
+        Annotated[
+            ServerSettingsUpdateUdpStartPortRange, Meta(title="Udp Start Port Range")
+        ]
         | None
         | UnsetType
     ) = UNSET
     udp_end_port_range: (
-        Annotated[UdpEndPortRange, Meta(title="Udp End Port Range")] | None | UnsetType
+        Annotated[ServerSettingsUpdateUdpEndPortRange, Meta(title="Udp End Port Range")]
+        | None
+        | UnsetType
     ) = UNSET
     ubridge_path: Annotated[str, Meta(title="Ubridge Path")] | None | UnsetType = UNSET
     ubridge_control_transport: UbridgeControlTransport | None | UnsetType = UNSET
@@ -4172,7 +4395,11 @@ class ServerSettingsUpdate(Struct):
         Annotated[str, Meta(title="Marker Listen Host")] | None | UnsetType
     ) = UNSET
     marker_listen_port: (
-        Annotated[MarkerListenPort, Meta(title="Marker Listen Port")] | None | UnsetType
+        Annotated[
+            ServerSettingsUpdateMarkerListenPort, Meta(title="Marker Listen Port")
+        ]
+        | None
+        | UnsetType
     ) = UNSET
     compute_username: (
         Annotated[str, Meta(title="Compute Username")] | None | UnsetType
@@ -4280,7 +4507,7 @@ class Template(Struct):
     usage: Annotated[str, Meta(title="Usage")] | None | UnsetType = ""
     netmiko_device_type: (
         Annotated[
-            NetmikoDeviceType6,
+            TemplateNetmikoDeviceType,
             Meta(
                 description="Device type for Netmiko-based automation tools (e.g. 'cisco_xr' or 'nokia_srl')",
                 title="Netmiko Device Type",
@@ -4310,8 +4537,8 @@ class Template(Struct):
         | None
         | UnsetType
     ) = UNSET
-    created_at: Annotated[str, Meta(title="Created At")] | None | UnsetType = UNSET
-    updated_at: Annotated[str, Meta(title="Updated At")] | None | UnsetType = UNSET
+    created_at: Annotated[datetime, Meta(title="Created At")] | None | UnsetType = UNSET
+    updated_at: Annotated[datetime, Meta(title="Updated At")] | None | UnsetType = UNSET
 
 
 class TemplateCreate(Struct):
@@ -4328,7 +4555,7 @@ class TemplateCreate(Struct):
     usage: Annotated[str, Meta(title="Usage")] | None | UnsetType = ""
     netmiko_device_type: (
         Annotated[
-            NetmikoDeviceType6,
+            TemplateCreateNetmikoDeviceType,
             Meta(
                 description="Device type for Netmiko-based automation tools (e.g. 'cisco_xr' or 'nokia_srl')",
                 title="Netmiko Device Type",
@@ -4395,7 +4622,7 @@ class TemplateUpdate(Struct):
     usage: Annotated[str, Meta(title="Usage")] | None | UnsetType = ""
     netmiko_device_type: (
         Annotated[
-            NetmikoDeviceType6,
+            TemplateUpdateNetmikoDeviceType,
             Meta(
                 description="Device type for Netmiko-based automation tools (e.g. 'cisco_xr' or 'nokia_srl')",
                 title="Netmiko Device Type",
@@ -4429,7 +4656,7 @@ class TemplateUpdate(Struct):
 
 class ApplianceV16(Struct):
     registry_version: Annotated[
-        RegistryVersion,
+        ApplianceV16RegistryVersion,
         Meta(title="Version of the registry compatible with this appliance"),
     ]
     appliance_id: Annotated[UUID, Meta(title="Appliance ID")]
@@ -4452,13 +4679,16 @@ class ApplianceV16(Struct):
         | UnsetType
     ) = UNSET
     vendor_url: (
-        Annotated[VendorUrl | VendorUrl1, Meta(title="Website of the vendor")]
+        Annotated[
+            ApplianceV16VendorUrl | ApplianceV16VendorUrl1,
+            Meta(title="Website of the vendor"),
+        ]
         | None
         | UnsetType
     ) = UNSET
     documentation_url: (
         Annotated[
-            DocumentationUrl | DocumentationUrl1,
+            ApplianceV16DocumentationUrl | ApplianceV16DocumentationUrl1,
             Meta(
                 title="An optional documentation for using the appliance on vendor website"
             ),
@@ -4468,7 +4698,7 @@ class ApplianceV16(Struct):
     ) = UNSET
     product_url: (
         Annotated[
-            ProductUrl | ProductUrl1,
+            ApplianceV16ProductUrl | ApplianceV16ProductUrl1,
             Meta(title="An optional product url on vendor website"),
         ]
         | None
@@ -4485,7 +4715,7 @@ class ApplianceV16(Struct):
         | UnsetType
     ) = UNSET
     maintainer_email: (
-        Annotated[str | MaintainerEmail, Meta(title="Maintainer email")]
+        Annotated[str | ApplianceV16MaintainerEmail, Meta(title="Maintainer email")]
         | None
         | UnsetType
     ) = UNSET
@@ -4499,7 +4729,7 @@ class ApplianceV16(Struct):
     ) = UNSET
     netmiko_device_type: (
         Annotated[
-            NetmikoDeviceType,
+            ApplianceV16NetmikoDeviceType,
             Meta(title="Device type for Netmiko-based automation tools"),
         ]
         | None
@@ -4613,7 +4843,7 @@ class ApplianceV8(Struct):
     ) = UNSET
     vendor_logo_url: (
         Annotated[
-            VendorLogoUrl,
+            ApplianceV8VendorLogoUrl,
             Meta(title="Link to the vendor logo (used by the GNS3 marketplace)"),
         ]
         | None
@@ -4621,7 +4851,7 @@ class ApplianceV8(Struct):
     ) = UNSET
     documentation_url: (
         Annotated[
-            DocumentationUrl2,
+            ApplianceV8DocumentationUrl,
             Meta(
                 title="An optional documentation for using the appliance on vendor website"
             ),
@@ -4630,7 +4860,10 @@ class ApplianceV8(Struct):
         | UnsetType
     ) = UNSET
     product_url: (
-        Annotated[ProductUrl2, Meta(title="An optional product url on vendor website")]
+        Annotated[
+            ApplianceV8ProductUrl,
+            Meta(title="An optional product url on vendor website"),
+        ]
         | None
         | UnsetType
     ) = UNSET
@@ -4669,7 +4902,7 @@ class ApplianceV8(Struct):
     ) = UNSET
     netmiko_device_type: (
         Annotated[
-            NetmikoDeviceType,
+            ApplianceV8NetmikoDeviceType,
             Meta(title="Device type for Netmiko-based automation tools"),
         ]
         | None
@@ -4698,7 +4931,7 @@ class Node(Struct):
     node_type: NodeType
     node_id: Annotated[UUID, Meta(title="Node Id")] | None | UnsetType = UNSET
     console: (
-        Annotated[Console, Meta(description="Console TCP port", title="Console")]
+        Annotated[NodeConsole, Meta(description="Console TCP port", title="Console")]
         | None
         | UnsetType
     ) = UNSET
@@ -4716,7 +4949,7 @@ class Node(Struct):
     ) = False
     netmiko_device_type: (
         Annotated[
-            NetmikoDeviceType3,
+            NodeNetmikoDeviceType,
             Meta(
                 description="Device type for Netmiko-based automation tools, overrides the template value",
                 title="Netmiko Device Type",
@@ -4748,7 +4981,7 @@ class Node(Struct):
         | UnsetType
     ) = UNSET
     aux: (
-        Annotated[Aux, Meta(description="Auxiliary console TCP port", title="Aux")]
+        Annotated[NodeAux, Meta(description="Auxiliary console TCP port", title="Aux")]
         | None
         | UnsetType
     ) = UNSET
