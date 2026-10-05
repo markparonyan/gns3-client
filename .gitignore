@@ -1,1 +1,5 @@
 gns3openapi.json
+__pycache__/
+.venv/
+.hypothesis/
+.ruff_cache/
