@@ -1,0 +1,30 @@
+[project]
+name = "gns3-client"
+version = "0.1.0"
+description = "Library for creating GNS3 topologies"
+readme = "README.md"
+authors = [
+    { name = "Mark Paronyan", email = "markparonian@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "msgspec>=0.22.0",
+    "zapros>=0.19.0",
+]
+
+[project.scripts]
+gns3-client = "gns3_client:main"
+
+[build-system]
+requires = ["uv_build>=0.12.22,<0.13.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+    "ruff>=0.16.10",
+]
+
+[tool.uv.build-backend]
+module-name = "gns3client"
+module-root = ""
