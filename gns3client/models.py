@@ -5,6 +5,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from enum import IntEnum, StrEnum
+from pathlib import Path
 from typing import Annotated, Any, Literal
 from uuid import UUID
 
@@ -20,8 +21,8 @@ class ACEUpdate(Struct):
     ace_type: Annotated[ACEType, Meta(description="Type of the ACE")]
     path: Annotated[str, Meta(title="Path")]
     role_id: Annotated[UUID, Meta(title="Role Id")]
-    propagate: Annotated[bool, Meta(title="Propagate")] | None | UnsetType = True
-    allowed: Annotated[bool, Meta(title="Allowed")] | None | UnsetType = True
+    propagate: Annotated[bool, Meta(title="Propagate")] | None | UnsetType = UNSET
+    allowed: Annotated[bool, Meta(title="Allowed")] | None | UnsetType = UNSET
     user_id: Annotated[UUID, Meta(title="User Id")] | None | UnsetType = UNSET
     group_id: Annotated[UUID, Meta(title="Group Id")] | None | UnsetType = UNSET
 
@@ -740,10 +741,134 @@ class IOUSettingsUpdate(Struct):
     )
 
 
+class ImageAvailability(StrEnum):
+    unknown = "unknown"
+    available = "available"
+    missing = "missing"
+    unavailable = "unavailable"
+    invalid = "invalid"
+
+
+class ImageApplianceMatch(Struct):
+    name: Annotated[str, Meta(title="Name")]
+    version: Annotated[str, Meta(title="Version")]
+    missing_images: Annotated[list[str], Meta(title="Missing Images")] | UnsetType = (
+        UNSET
+    )
+    downloadable_images: (
+        Annotated[list[str], Meta(title="Downloadable Images")] | UnsetType
+    ) = UNSET
+
+
+class ImageCompatibility(Struct):
+    checksum: Annotated[str, Meta(title="Checksum")]
+    matches: Annotated[list[ImageApplianceMatch], Meta(title="Matches")]
+
+
+class ImageCompatibilityCatalog(Struct):
+    image_sizes: Annotated[list[int], Meta(title="Image Sizes")]
+    has_unknown_sizes: Annotated[bool, Meta(title="Has Unknown Sizes")]
+
+
+type ImageCompatibilityRequestChecksum = Annotated[
+    str, Meta(pattern="^[a-fA-F0-9]{32}$")
+]
+
+
+class ImageCompatibilityRequest(Struct):
+    checksums: Annotated[
+        list[ImageCompatibilityRequestChecksum],
+        Meta(max_length=1000, min_length=1, title="Checksums"),
+    ]
+
+
+class ImageSyncJobStatus(StrEnum):
+    queued = "queued"
+    running = "running"
+    completed = "completed"
+    partial = "partial"
+    failed = "failed"
+    cancelled = "cancelled"
+    interrupted = "interrupted"
+
+
+class ImageSyncJob(Struct):
+    job_id: Annotated[str, Meta(title="Job Id")]
+    status: Annotated[ImageSyncJobStatus, Meta(title="Status")]
+    dry_run: Annotated[bool, Meta(title="Dry Run")]
+    force_checksum: Annotated[bool, Meta(title="Force Checksum")]
+    counts: Annotated[dict[str, int], Meta(title="Counts")]
+    errors: Annotated[list[dict[str, str]], Meta(title="Errors")]
+    created_at: Annotated[datetime, Meta(title="Created At")] | None | UnsetType = UNSET
+    updated_at: Annotated[datetime, Meta(title="Updated At")] | None | UnsetType = UNSET
+    finished_at: Annotated[datetime, Meta(title="Finished At")] | None | UnsetType = (
+        UNSET
+    )
+
+
+class ImageSyncRequest(Struct):
+    dry_run: Annotated[bool, Meta(title="Dry Run")] | UnsetType = False
+    force_checksum: Annotated[bool, Meta(title="Force Checksum")] | UnsetType = False
+
+
+class ImageTemplateResultStatus(StrEnum):
+    created = "created"
+    skipped = "skipped"
+
+
+class ImageTemplateResult(Struct):
+    status: Annotated[ImageTemplateResultStatus, Meta(title="Status")]
+    name: Annotated[str, Meta(title="Name")] | None | UnsetType = UNSET
+    reason: Annotated[str, Meta(title="Reason")] | None | UnsetType = UNSET
+    template_id: Annotated[str, Meta(title="Template Id")] | None | UnsetType = UNSET
+    version: Annotated[str, Meta(title="Version")] | None | UnsetType = UNSET
+    template_type: Annotated[str, Meta(title="Template Type")] | None | UnsetType = (
+        UNSET
+    )
+
+
 class ImageType(StrEnum):
     qemu = "qemu"
     ios = "ios"
     iou = "iou"
+
+
+class ImageUploadAvailability(StrEnum):
+    unknown = "unknown"
+    available = "available"
+    missing = "missing"
+    unavailable = "unavailable"
+    invalid = "invalid"
+
+
+class ImageUpload(Struct):
+    filename: Annotated[str, Meta(description="Image filename", title="Filename")]
+    path: Annotated[str, Meta(description="Image path", title="Path")]
+    image_type: Annotated[ImageType, Meta(description="Image type")]
+    image_size: Annotated[
+        int, Meta(description="Image size in bytes", title="Image Size")
+    ]
+    checksum: Annotated[str, Meta(description="Checksum value", title="Checksum")]
+    checksum_algorithm: Annotated[
+        str, Meta(description="Checksum algorithm", title="Checksum Algorithm")
+    ]
+    availability: (
+        Annotated[ImageUploadAvailability, Meta(title="Availability")] | UnsetType
+    ) = "unknown"
+    last_seen_at: Annotated[datetime, Meta(title="Last Seen At")] | None | UnsetType = (
+        UNSET
+    )
+    last_verified_at: (
+        Annotated[datetime, Meta(title="Last Verified At")] | None | UnsetType
+    ) = UNSET
+    last_error: Annotated[str, Meta(title="Last Error")] | None | UnsetType = UNSET
+    created_at: Annotated[datetime, Meta(title="Created At")] | None | UnsetType = UNSET
+    updated_at: Annotated[datetime, Meta(title="Updated At")] | None | UnsetType = UNSET
+    template_results: (
+        Annotated[list[ImageTemplateResult], Meta(title="Template Results")]
+        | None
+        | UnsetType
+    ) = UNSET
 
 
 class Iou(Struct):
@@ -871,7 +996,7 @@ class LinkUpdate(Struct):
         ]
         | None
         | UnsetType
-    ) = True
+    ) = UNSET
 
 
 type LoggedInUserUpdatePassword = Annotated[
@@ -1328,12 +1453,7 @@ type NodeUpdateAux = Annotated[
 
 
 class NodeUpdate(Struct):
-    compute_id: Annotated[UUID | str, Meta(title="Compute Id")] | None | UnsetType = (
-        UNSET
-    )
     name: Annotated[str, Meta(title="Name")] | None | UnsetType = UNSET
-    node_type: NodeType | None | UnsetType = UNSET
-    node_id: Annotated[UUID, Meta(title="Node Id")] | None | UnsetType = UNSET
     console: (
         Annotated[
             NodeUpdateConsole, Meta(description="Console TCP port", title="Console")
@@ -1352,7 +1472,7 @@ class NodeUpdate(Struct):
         ]
         | None
         | UnsetType
-    ) = False
+    ) = UNSET
     netmiko_device_type: (
         Annotated[
             NodeUpdateNetmikoDeviceType,
@@ -1404,16 +1524,16 @@ class NodeUpdate(Struct):
     ) = UNSET
     label: Label | None | UnsetType = UNSET
     symbol: Annotated[str, Meta(title="Symbol")] | None | UnsetType = UNSET
-    x: Annotated[int, Meta(title="X")] | None | UnsetType = 0
-    y: Annotated[int, Meta(title="Y")] | None | UnsetType = 0
-    z: Annotated[int, Meta(title="Z")] | None | UnsetType = 1
+    x: Annotated[int, Meta(title="X")] | None | UnsetType = UNSET
+    y: Annotated[int, Meta(title="Y")] | None | UnsetType = UNSET
+    z: Annotated[int, Meta(title="Z")] | None | UnsetType = UNSET
     locked: (
         Annotated[
             bool, Meta(description="Whether the element locked or not", title="Locked")
         ]
         | None
         | UnsetType
-    ) = False
+    ) = UNSET
     port_name_format: (
         Annotated[
             str,
@@ -1794,6 +1914,11 @@ class ServerProtocol(StrEnum):
 type ServerSettingsUpdatePort = Annotated[int, Meta(gt=0, le=65535, title="Port")]
 
 
+type ServerSettingsUpdateImageSyncInterval = Annotated[
+    int, Meta(ge=10, title="Image Sync Interval")
+]
+
+
 type ServerSettingsUpdateConsoleStartPortRange = Annotated[
     int, Meta(gt=0, le=65535, title="Console Start Port Range")
 ]
@@ -1907,13 +2032,6 @@ type TemplateCreateNetmikoDeviceType = Annotated[
 ]
 
 
-class TemplateType(StrEnum):
-    docker = "docker"
-    iou = "iou"
-    dynamips = "dynamips"
-    qemu = "qemu"
-
-
 type TemplateUpdateNetmikoDeviceType = Annotated[
     str,
     Meta(
@@ -2008,13 +2126,8 @@ class UserGroup(Struct):
     updated_at: Annotated[datetime, Meta(title="Updated At")] | None | UnsetType = UNSET
 
 
-type UserGroupCreateName = Annotated[
-    str, Meta(min_length=3, pattern="[a-zA-Z0-9_-]+$", title="Name")
-]
-
-
 class UserGroupCreate(Struct):
-    name: Annotated[UserGroupCreateName, Meta(title="Name")] | None
+    name: Annotated[str, Meta(min_length=3, pattern="[a-zA-Z0-9_-]+$", title="Name")]
 
 
 type UserGroupUpdateName = Annotated[
@@ -2040,7 +2153,7 @@ class UserUpdate(Struct):
     username: (
         Annotated[UserUpdateUsername, Meta(title="Username")] | None | UnsetType
     ) = UNSET
-    is_active: Annotated[bool, Meta(title="Is Active")] | UnsetType = True
+    is_active: Annotated[bool, Meta(title="Is Active")] | UnsetType = UNSET
     email: Annotated[str, Meta(title="Email")] | None | UnsetType = UNSET
     full_name: Annotated[str, Meta(title="Full Name")] | None | UnsetType = UNSET
     password: (
@@ -2374,7 +2487,7 @@ class Compute(Struct):
     port: Annotated[int, Meta(gt=0, le=65535, title="Port")]
     name: Annotated[str, Meta(title="Name")]
     compute_id: Annotated[str | UUID, Meta(title="Compute Id")]
-    user: Annotated[str, Meta(title="User")] | UnsetType = UNSET
+    user: Annotated[str, Meta(title="User")] | None | UnsetType = UNSET
     password: Annotated[str, Meta(title="Password")] | None | UnsetType = UNSET
     created_at: Annotated[datetime, Meta(title="Created At")] | None | UnsetType = UNSET
     updated_at: Annotated[datetime, Meta(title="Updated At")] | None | UnsetType = UNSET
@@ -2429,10 +2542,12 @@ class ComputeCreate(Struct):
     protocol: Protocol
     host: Annotated[str, Meta(title="Host")]
     port: Annotated[int, Meta(gt=0, le=65535, title="Port")]
-    user: Annotated[str, Meta(title="User")] | UnsetType = UNSET
+    user: Annotated[str, Meta(title="User")] | None | UnsetType = UNSET
     password: Annotated[str, Meta(title="Password")] | None | UnsetType = UNSET
     name: Annotated[str, Meta(title="Name")] | None | UnsetType = UNSET
-    compute_id: Annotated[str | UUID, Meta(title="Compute Id")] | UnsetType = UNSET
+    compute_id: Annotated[UUID | str, Meta(title="Compute Id")] | None | UnsetType = (
+        UNSET
+    )
 
 
 class ComputeUpdate(Struct):
@@ -2619,6 +2734,25 @@ class DockerPropertiesV8(Struct):
     ) = UNSET
 
 
+class DockerTemplateSetting(Struct, tag_field="template_type", tag="docker"):
+    template_properties: Annotated[
+        DockerPropertiesV8, Meta(title="Properties for the template")
+    ]
+    name: Annotated[str, Meta(title="Name of the settings set")] | None | UnsetType = (
+        UNSET
+    )
+    default: (
+        Annotated[bool, Meta(title="Whether these are the default settings")]
+        | None
+        | UnsetType
+    ) = UNSET
+    inherit_default_properties: (
+        Annotated[bool, Meta(title="Whether the default properties should be used")]
+        | None
+        | UnsetType
+    ) = True
+
+
 class Dynamips(Struct):
     platform: Annotated[DynamipsPlatform, Meta(title="Platform type")]
     ram: Annotated[int, Meta(ge=1, title="Amount of ram")]
@@ -2698,6 +2832,25 @@ class DynamipsPropertiesV8(Struct):
     npe: DynamipsNpe | None | UnsetType = UNSET
 
 
+class DynamipsTemplateSetting(Struct, tag_field="template_type", tag="dynamips"):
+    template_properties: Annotated[
+        DynamipsPropertiesV8, Meta(title="Properties for the template")
+    ]
+    name: Annotated[str, Meta(title="Name of the settings set")] | None | UnsetType = (
+        UNSET
+    )
+    default: (
+        Annotated[bool, Meta(title="Whether these are the default settings")]
+        | None
+        | UnsetType
+    ) = UNSET
+    inherit_default_properties: (
+        Annotated[bool, Meta(title="Whether the default properties should be used")]
+        | None
+        | UnsetType
+    ) = True
+
+
 class GNS3VM(Struct):
     enable: (
         Annotated[bool, Meta(description="Enable/disable the GNS3 VM", title="Enable")]
@@ -2775,6 +2928,16 @@ class Image(Struct):
     checksum_algorithm: Annotated[
         str, Meta(description="Checksum algorithm", title="Checksum Algorithm")
     ]
+    availability: (
+        Annotated[ImageAvailability, Meta(title="Availability")] | UnsetType
+    ) = "unknown"
+    last_seen_at: Annotated[datetime, Meta(title="Last Seen At")] | None | UnsetType = (
+        UNSET
+    )
+    last_verified_at: (
+        Annotated[datetime, Meta(title="Last Verified At")] | None | UnsetType
+    ) = UNSET
+    last_error: Annotated[str, Meta(title="Last Error")] | None | UnsetType = UNSET
     created_at: Annotated[datetime, Meta(title="Created At")] | None | UnsetType = UNSET
     updated_at: Annotated[datetime, Meta(title="Updated At")] | None | UnsetType = UNSET
 
@@ -2809,6 +2972,25 @@ class IouPropertiesV8(Struct):
     startup_config: (
         Annotated[str, Meta(title="Config loaded at startup")] | None | UnsetType
     ) = UNSET
+
+
+class IouTemplateSetting(Struct, tag_field="template_type", tag="iou"):
+    template_properties: Annotated[
+        IouPropertiesV8, Meta(title="Properties for the template")
+    ]
+    name: Annotated[str, Meta(title="Name of the settings set")] | None | UnsetType = (
+        UNSET
+    )
+    default: (
+        Annotated[bool, Meta(title="Whether these are the default settings")]
+        | None
+        | UnsetType
+    ) = UNSET
+    inherit_default_properties: (
+        Annotated[bool, Meta(title="Whether the default properties should be used")]
+        | None
+        | UnsetType
+    ) = True
 
 
 type LinkNodes = Annotated[
@@ -3478,12 +3660,6 @@ class ProjectDuplicate(Struct):
 
 class ProjectUpdate(Struct):
     name: Annotated[str, Meta(title="Name")] | None | UnsetType = UNSET
-    project_id: Annotated[UUID, Meta(title="Project Id")] | None | UnsetType = UNSET
-    path: (
-        Annotated[str, Meta(description="Project directory", title="Path")]
-        | None
-        | UnsetType
-    ) = UNSET
     auto_close: (
         Annotated[
             bool,
@@ -3850,6 +4026,25 @@ class QemuPropertiesV8(Struct):
     ) = UNSET
 
 
+class QemuTemplateSetting(Struct, tag_field="template_type", tag="qemu"):
+    template_properties: Annotated[
+        QemuPropertiesV8, Meta(title="Properties for the template")
+    ]
+    name: Annotated[str, Meta(title="Name of the settings set")] | None | UnsetType = (
+        UNSET
+    )
+    default: (
+        Annotated[bool, Meta(title="Whether these are the default settings")]
+        | None
+        | UnsetType
+    ) = UNSET
+    inherit_default_properties: (
+        Annotated[bool, Meta(title="Whether the default properties should be used")]
+        | None
+        | UnsetType
+    ) = True
+
+
 class Resource(Struct):
     resource_id: Annotated[UUID, Meta(title="Resource Id")]
     resource_type: Annotated[ResourceType, Meta(description="Type of the resource")]
@@ -3888,7 +4083,7 @@ class ServerSettingsResponse(Struct):
             ),
         ]
         | UnsetType
-    ) = "runnervmtr4k5 (controller)"
+    ) = "archlinux (controller)"
     protocol: (
         Annotated[
             ServerProtocol,
@@ -3920,7 +4115,7 @@ class ServerSettingsResponse(Struct):
     ) = 3080
     secrets_dir: (
         Annotated[
-            str,
+            Path,
             Meta(
                 description="Directory where secrets are stored (e.g. the JWT secret key)",
                 title="Secrets Dir",
@@ -3931,7 +4126,7 @@ class ServerSettingsResponse(Struct):
     ) = UNSET
     certfile: (
         Annotated[
-            str,
+            Path,
             Meta(
                 description="SSL certificate file, requires enable_ssl",
                 title="Certfile",
@@ -3942,7 +4137,7 @@ class ServerSettingsResponse(Struct):
     ) = UNSET
     certkey: (
         Annotated[
-            str, Meta(description="SSL key file, requires enable_ssl", title="Certkey")
+            Path, Meta(description="SSL key file, requires enable_ssl", title="Certkey")
         ]
         | None
         | UnsetType
@@ -4039,6 +4234,17 @@ class ServerSettingsResponse(Struct):
         ]
         | UnsetType
     ) = True
+    image_sync_interval: (
+        Annotated[
+            int,
+            Meta(
+                description="Seconds between automatic image inventory scans",
+                ge=10,
+                title="Image Sync Interval",
+            ),
+        ]
+        | UnsetType
+    ) = 900
     report_errors: (
         Annotated[
             bool,
@@ -4339,6 +4545,13 @@ class ServerSettingsUpdate(Struct):
     auto_discover_images: (
         Annotated[bool, Meta(title="Auto Discover Images")] | None | UnsetType
     ) = UNSET
+    image_sync_interval: (
+        Annotated[
+            ServerSettingsUpdateImageSyncInterval, Meta(title="Image Sync Interval")
+        ]
+        | None
+        | UnsetType
+    ) = UNSET
     report_errors: Annotated[bool, Meta(title="Report Errors")] | None | UnsetType = (
         UNSET
     )
@@ -4587,29 +4800,7 @@ class TemplateCreate(Struct):
     ) = UNSET
 
 
-class TemplateSetting(Struct):
-    template_type: Annotated[TemplateType, Meta(title="Type of emulator properties")]
-    template_properties: Annotated[
-        QemuPropertiesV8 | DynamipsPropertiesV8 | IouPropertiesV8 | DockerPropertiesV8,
-        Meta(title="Properties for the template"),
-    ]
-    name: Annotated[str, Meta(title="Name of the settings set")] | None | UnsetType = (
-        UNSET
-    )
-    default: (
-        Annotated[bool, Meta(title="Whether these are the default settings")]
-        | None
-        | UnsetType
-    ) = UNSET
-    inherit_default_properties: (
-        Annotated[bool, Meta(title="Whether the default properties should be used")]
-        | None
-        | UnsetType
-    ) = True
-
-
 class TemplateUpdate(Struct):
-    template_id: Annotated[UUID, Meta(title="Template Id")] | None | UnsetType = UNSET
     name: Annotated[str, Meta(title="Name")] | None | UnsetType = UNSET
     version: Annotated[str, Meta(title="Version")] | None | UnsetType = UNSET
     category: Gns3serverSchemasControllerTemplatesCategory | None | UnsetType = UNSET
@@ -4619,7 +4810,7 @@ class TemplateUpdate(Struct):
     symbol: Annotated[str, Meta(title="Symbol")] | None | UnsetType = UNSET
     template_type: NodeType | None | UnsetType = UNSET
     compute_id: Annotated[str, Meta(title="Compute Id")] | None | UnsetType = UNSET
-    usage: Annotated[str, Meta(title="Usage")] | None | UnsetType = ""
+    usage: Annotated[str, Meta(title="Usage")] | None | UnsetType = UNSET
     netmiko_device_type: (
         Annotated[
             TemplateUpdateNetmikoDeviceType,
@@ -4834,7 +5025,13 @@ class ApplianceV8(Struct):
     maintainer: Annotated[str, Meta(title="Maintainer name")]
     maintainer_email: Annotated[str, Meta(title="Maintainer email")]
     settings: Annotated[
-        list[TemplateSetting], Meta(title="Settings for running the appliance")
+        list[
+            QemuTemplateSetting
+            | DynamipsTemplateSetting
+            | IouTemplateSetting
+            | DockerTemplateSetting
+        ],
+        Meta(title="Settings for running the appliance"),
     ]
     builtin: (
         Annotated[bool, Meta(title="Whether the appliance is builtin or not")]
